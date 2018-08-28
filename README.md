@@ -16,3 +16,7 @@ The following functions process the `Session` data object to acquire a binned sp
 The following functions were written by Michael Prerau (c) 2011.
 
 * `cvKernel` computes the maximum likelihood estimate, the bandwidth parameter associated with the MLE, the log likelihoods for the range of tested bandwidths, and the tested bandwidths themselves. It takes a spike train, the time step, and the bandwidth range to be tested, in time-steps. It defaults to 3:2:N where N is 3/2 the length of the spike train. Generally, this is much too long, and it is advisable to put limits on the range of tested bandwidths.
+* `kconv` performs the kernel convolution. It is called within `cvKernel`.
+* `cvExample` is a script that demonstrates the algorithm.
+
+The `batchFunction` is used for generating batch scripts with [RatCatcher](https://github.com/hasselmonians/RatCatcher).
