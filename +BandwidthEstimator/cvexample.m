@@ -37,7 +37,7 @@ for p=[1.5 5]
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %Run the cross-validated kernel smoother--Just one command :)
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    [estimate kmax loglikelihoods bandwidths CI]=cvkernel(spikecount, dt,[],1);
+    [estimate kmax loglikelihoods bandwidths CI]=BandwidthEstimator.cvkernel(spikecount, dt,[],1);
 
     %Plot the data and the estimate of the true value
     axs=get(gcf,'children');
