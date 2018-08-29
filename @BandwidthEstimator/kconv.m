@@ -1,10 +1,10 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %                                    KCONV.M
-%                         © Michael J. Prerau, Ph.D. 2011
+%                         ï¿½ Michael J. Prerau, Ph.D. 2011
 %
 %   This code is used in thethe algorithm described in:
-%   Prerau M.J., Eden U.T. 
-%   "A General Likelihood Framework for Characterizing the Time Course of Neural Activity", 
+%   Prerau M.J., Eden U.T.
+%   "A General Likelihood Framework for Characterizing the Time Course of Neural Activity",
 %   Journal of Neuroscience, 2011
 %
 %   Performs a kernel convolution removing end effects and returning a
@@ -15,18 +15,21 @@
 %       data is the 1xN data vector
 %       k is the kernel/window function. kconv requires an odd length window
 %       dt is the time resolution
-%       
+%
 %       result is the 1XN result of the kernel smoother
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function result=kconv(data,k,dt)
+function result=kconv(self, k)
+
+data  = self.spikeTrain;
+dt    = 1 / self.Fs;
 
 data=data(:)';
 k=k(:)';
 
-%Assume dt=1 if none specified
-if nargin==2
-    dt=1;
-end
+% %Assume dt=1 if none specified
+% if nargin==2
+%     dt=1;
+% end
 
 %Require an odd length window
 w=length(k);
@@ -65,4 +68,3 @@ for wsize=wval
     %Calculate the leave-one out convolution
     result(wsize)=sum(data(ds:de).*k(ks:ke)/sum(k(ks:ke))/dt);
 end
-

@@ -42,7 +42,12 @@
 %       Run "cvexample.m" for an example of the cross-validated kernel
 %       smoother used on spiking data.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function [estimate, kmax, loglikelihoods, bandwidths, CI] = cvKernel(root, spikeTrain, range, parallel)
+function [estimate, kmax, loglikelihoods, bandwidths, CI] = cvKernel(self, parallel)
+
+  range       = self.range;
+  spikeTrain  = self.spikeTrain;
+  Fs          = self.Fs;
+  dt          = 1 / Fs;
 
   if ~any(spikeTrain)
       estimate=zeros(1,length(spikeTrain));
@@ -53,12 +58,9 @@ function [estimate, kmax, loglikelihoods, bandwidths, CI] = cvKernel(root, spike
       return;
   end
 
-  if nargin < 4
+  if nargin < 2
     parallel = false;
   end
-
-  % set up the time-step
-  dt = 1 / root.fs_video;
 
   %Make sure spikeTrain isn't logical
   if ~isa(spikeTrain,'double')
@@ -78,10 +80,10 @@ function [estimate, kmax, loglikelihoods, bandwidths, CI] = cvKernel(root, spike
   end
 
   %Set bandwidths if not specified
-  if nargin < 3 || isempty(range)
-          bandwidths=3:2:3*L;
+  if isempty(range)
+    bandwidths=3:2:3*L;
   else
-      bandwidths=range;
+    bandwidths=range;
   end
 
   %Allocate mean square error
@@ -105,7 +107,7 @@ function [estimate, kmax, loglikelihoods, bandwidths, CI] = cvKernel(root, spike
         k=k/sum(k);
 
         %Perform lave one out convolution
-        l1o=BandwidthEstimator.kconv(spikeTrain,k,dt);
+        l1o = self.kconv(k);
 
         %Fix log(0) problem
         l1o(~l1o)=1e-5;
@@ -129,8 +131,8 @@ function [estimate, kmax, loglikelihoods, bandwidths, CI] = cvKernel(root, spike
         %Normalize the notch kernel
         k=k/sum(k);
 
-        %Perform lave one out convolution
-        l1o=BandwidthEstimator.kconv(spikeTrain,k,dt);
+        %Perform leave one out convolution
+        l1o = self.kconv(k);
 
         %Fix log(0) problem
         l1o(~l1o)=1e-5;
@@ -164,7 +166,7 @@ function [estimate, kmax, loglikelihoods, bandwidths, CI] = cvKernel(root, spike
   %Calculate the full convolution with the best kernel
   if kmax<length(loglikelihoods)
       k=hanning(kmax)/sum(hanning(kmax));
-      estimate=BandwidthEstimator.kconv(spikeTrain,k,dt);
+      estimate = self.kconv(k);
   else
       estimate=ones(1,length(spikeTrain))*(sum(spikeTrain)/(dt*length(spikeTrain)));
   end
