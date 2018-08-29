@@ -31,6 +31,7 @@ end % methods
 methods (Static)
 
   spikeTrain = getSpikeTrain(spikeTimes, timestep)
+  batchFunction(filename, cellnum, outfile, test)
 
 end % static methods
 
