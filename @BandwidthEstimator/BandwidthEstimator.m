@@ -18,7 +18,7 @@ methods
     spikeTimes        = CMBHOME.Utils.ContinuizeEpochs(root.cel_ts);
     spikeTrain        = BandwidthEstimator.getSpikeTrain(spikeTimes, self.timestamps);
     Fs                = root.fs_video;
-    range             = 3:2:(120 * Fs);
+    range             = 3:2:(60 * Fs);
 
     self.spikeTimes   = spikeTimes;
     self.spikeTrain   = spikeTrain;
