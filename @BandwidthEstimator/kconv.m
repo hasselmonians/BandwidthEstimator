@@ -10,12 +10,6 @@
 %   Performs a kernel convolution removing end effects and returning a
 %   result the same size as the input data
 %
-%       result=kconv(data,k,dt)
-%
-%       data is the 1xN data vector
-%       k is the kernel/window function. kconv requires an odd length window
-%       dt is the time resolution
-%
 %       result is the 1XN result of the kernel smoother
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function result=kconv(self, k)

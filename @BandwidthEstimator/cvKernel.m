@@ -10,24 +10,6 @@
 %   Performs hanning kernel smoothing using cross validation on the
 %   kernel smoother used on spiking
 %
-%   USAGE:
-%       [estimate kmax loglikelihoods bandwidths]=cvkernel(spikeTrain, dt)
-%                                      or
-%       [estimate kmax loglikelihoods bandwidths]=cvkernel(spikeTrain, dt, range)
-%                                      or
-%       [estimate kmax loglikelihoods bandwidths]=cvkernel(spikeTrain, dt, range, ploton)
-%
-%   INPUTS:
-%       spikeTrain is the 1xN vector of spike counts
-%       dt is the sampling rate (in seconds) of spikeTrain
-%
-%     Optional:
-%       range is a 1xV vector that specifies the range of bandwidths to use in the
-%           cross-validation. This vector the units of this vector is number of
-%           dt sized time bins and all values should be odd. (Default: [3:2:N])
-%       ploton is 1 for a figure showing the estimate and bandwidth
-%           likelihood with confidence bounds, (Default: 0)
-%
 %   OUTPUTS:
 %       estimate is the estimate of the nonparametric regression/rate
 %       kmax is the bandwidth with the maximum likelihood
