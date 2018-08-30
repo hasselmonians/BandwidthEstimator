@@ -88,7 +88,7 @@ function [estimate, kmax, loglikelihoods, bandwidths, CI] = cvKernel(self, paral
         %Normalize the notch kernel
         k=k/sum(k);
 
-        %Perform lave one out convolution
+        %Perform leave one out convolution
         l1o = self.kconv(k);
 
         %Fix log(0) problem
