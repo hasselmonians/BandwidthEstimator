@@ -22,10 +22,14 @@ function batchFunction(filename, cellnum, outfile, test)
   best        = BandwidthEstimator(root);
   best.range  = 3:2:(60*best.Fs);
 
-  % perform bandwidth parameter estimate
-  [estimate, kmax, loglikelihoods, bandwidths, CI] = best.cvKernel(true);
+  % perform bandwidth parameter estimate with MLE/CV
+  [estimate, kmaxMLE, loglikelihoods, bandwidths, CI] = best.cvKernel(true);
+
+  % perform bandwidth parameter estimate with cross-correlation
+  % NOTE: This is a very inefficient way of running this. Ideally, this analysis should be part of cvKernel, so that the convolutions are only performed once. This analysis is being done here so that it can be readily eliminated if necessary.
+  [estimate, kmaxCorr, logmaxcorr, corr, lag] = best.corrKernel(root.svel, true);
 
   % save the data
-  csvwrite(outfile, [kmax*(1/best.Fs) CI]);
+  csvwrite(outfile, [kmaxMLE*(1/best.Fs) CI kmaxCorr*(1/best.Fs)]);
 
 end % function
