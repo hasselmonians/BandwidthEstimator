@@ -79,7 +79,6 @@ function [estimate, kmax, logmaxcorr, corr, lag] = corrKernel(self, signal, para
 
       % perform leave one out convolution
       frequency = self.kconv(k);
-
       % compute the cross-correlation
       [corr, lag] = xcorr(frequency, signal);
       logmaxcorr(wn) = log(max(corr));
