@@ -30,14 +30,7 @@ function [estimate, kmax, loglikelihoods, bandwidths, CI] = cvKernel(self, paral
   spikeTrain  = self.spikeTrain;
   Fs          = self.Fs;
   dt          = 1 / Fs;
-
-  % if kernel is a character vector, find the appropriate static method
-  % otherwise, kernel should be a function handle
-  if ischar(self.kernel)
-    kernel      = str2func(['BandwidthEstimator.' self.kernel]);
-  else
-    kernel      = self.kernel;
-  end
+  kernel      = best.kernel;
 
   if ~any(spikeTrain)
       estimate=zeros(1,length(spikeTrain));
