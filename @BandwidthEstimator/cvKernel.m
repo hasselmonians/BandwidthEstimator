@@ -105,7 +105,7 @@ function [estimate, kmax, loglikelihoods, bandwidths, CI] = cvKernel(self, paral
             bandwidths(wn)=bandwidths(wn)+1;
         end
         w=bandwidths(wn);
-
+        
         % set up the kernel
         k       = kernel(w);
         mid     = (w - 1) / 2 + 1;

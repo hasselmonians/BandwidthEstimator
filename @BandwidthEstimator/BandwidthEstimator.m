@@ -30,21 +30,17 @@ methods
   end
 
   % set the range to 3 : 2 : (value / best.Fs), where value is in seconds
-  function self = set.range(self, value, scaled)
+  function self = set.range(self, value)
 
-    if nargin < 3
-      scaled = true; % should the range be scaled by the sampling rate?
-    end
-
-    if (value > 0)
-      self.range = 3:2:value;
+    if isscalar(value)
+      if (value > 0)
+        self.range = 3:2:(value * self.Fs);
+      else
+        error('Property value must be positive')
+      end % value > 0
     else
-      error('Property value must be positive')
-    end
-
-    if (scaled == true)
-      self.range = self.range / self.Fs;
-    end
+      self.range = value;
+    end % isscalar(value)
 
   end % function
 
