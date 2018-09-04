@@ -34,7 +34,7 @@ function [estimate, kmax, loglikelihoods, bandwidths, CI] = cvKernel(self, paral
   % if kernel is a character vector, find the appropriate static method
   % otherwise, kernel should be a function handle
   if ischar(self.kernel)
-    kernel      = str2func(['BandwidthEstimator.' self.kernel])
+    kernel      = str2func(['BandwidthEstimator.' self.kernel]);
   else
     kernel      = self.kernel;
   end
