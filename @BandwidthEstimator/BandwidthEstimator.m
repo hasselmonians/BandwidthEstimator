@@ -7,6 +7,7 @@ properties
   spikeTimes  % the spike times in seconds
   Fs          % the sample frequency in Hz
   timestamps  % the time steps in s
+  kernel      % the type of kernel to be used
 
 end % properties
 
@@ -33,6 +34,7 @@ methods (Static)
   spikeTrain = getSpikeTrain(spikeTimes, timestep)
   batchFunction(filename, cellnum, outfile, test)
   result = alpha(k, tau)
+  w = hanning(n)
 
 end % static methods
 
