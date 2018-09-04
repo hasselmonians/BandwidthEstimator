@@ -30,6 +30,7 @@ function [estimate, kmax, loglikelihoods, bandwidths, CI] = cvKernel(self, paral
   spikeTrain  = self.spikeTrain;
   Fs          = self.Fs;
   dt          = 1 / Fs;
+  kernel      = self.kernel;
 
   if ~any(spikeTrain)
       estimate=zeros(1,length(spikeTrain));
@@ -104,14 +105,13 @@ function [estimate, kmax, loglikelihoods, bandwidths, CI] = cvKernel(self, paral
             bandwidths(wn)=bandwidths(wn)+1;
         end
         w=bandwidths(wn);
-
-        %Set center point to zero for leave one out filter
-        mid=(w-1)/2+1;
-        k=hanning(w);
-        k(mid)=0;
-
-        %Normalize the notch kernel
-        k=k/sum(k);
+        
+        % set up the kernel
+        k       = kernel(w);
+        mid     = (w - 1) / 2 + 1;
+        k(mid)  = 0;
+        % normalize the kernel
+        k       = k / sum(k);
 
         %Perform leave one out convolution
         l1o = self.kconv(k);

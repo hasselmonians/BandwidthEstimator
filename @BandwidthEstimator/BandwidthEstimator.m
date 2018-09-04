@@ -7,6 +7,7 @@ properties
   spikeTimes  % the spike times in seconds
   Fs          % the sample frequency in Hz
   timestamps  % the time steps in s
+  kernel      % the type of kernel to be used
 
 end % properties
 
@@ -19,12 +20,43 @@ methods
     spikeTrain        = BandwidthEstimator.getSpikeTrain(spikeTimes, self.timestamps);
     Fs                = root.fs_video;
     range             = 3:2:(60 * Fs);
+    kernel            = 'hanning';
 
     self.spikeTimes   = spikeTimes;
     self.spikeTrain   = spikeTrain;
     self.Fs           = Fs;
     self.range        = range;
+    self.kernel       = kernel;
   end
+
+  % set the range to 3 : 2 : (value / best.Fs), where value is in seconds
+  function self = set.range(self, value)
+
+    if isscalar(value)
+      if (value > 0)
+        self.range = 3:2:(value * self.Fs);
+      else
+        error('Property value must be positive')
+      end % value > 0
+    else
+      self.range = value;
+    end % isscalar(value)
+
+  end % function
+
+  % set the kernel to a function handle
+  function self = set.kernel(self, value)
+
+    % if kernel is a character vector, find the appropriate static method
+    % otherwise, kernel should be a function handle
+
+    if ischar(value)
+      self.kernel   = str2func(['BandwidthEstimator.' value]);
+    else
+      self.kernel   = value;
+    end
+
+  end % function
 
 end % methods
 
@@ -32,6 +64,8 @@ methods (Static)
 
   spikeTrain = getSpikeTrain(spikeTimes, timestep)
   batchFunction(filename, cellnum, outfile, test)
+  result = alpha(k, tau)
+  w = hanning(n)
 
 end % static methods
 
