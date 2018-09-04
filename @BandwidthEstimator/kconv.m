@@ -12,10 +12,15 @@
 %
 %       result is the 1XN result of the kernel smoother
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function result=kconv(self, k)
+function result=kconv(self, varargin)
+
+  % the variable arguments are passed to the kernel function
 
 data  = self.spikeTrain;
 dt    = 1 / self.Fs;
+kernel= self.kernel;
+
+k     = kernel(varargin{:});
 
 data=data(:)';
 k=k(:)';
