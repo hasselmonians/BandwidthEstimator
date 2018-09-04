@@ -3,14 +3,14 @@ function w = alpha(k, tau)
   % tau is the time-constant of the alpha function
 
   if nargin < 2
-    tau = 1;
+    tau = max(k) / 10;
   end
 
   if isscalar(k)
     L = 1:k;
     w = L .* exp(-L / tau);
     w = w';
-    return w;
+    return
   end
 
   if isvector(k)
