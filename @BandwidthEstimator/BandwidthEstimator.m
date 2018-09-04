@@ -20,11 +20,13 @@ methods
     spikeTrain        = BandwidthEstimator.getSpikeTrain(spikeTimes, self.timestamps);
     Fs                = root.fs_video;
     range             = 3:2:(60 * Fs);
+    kernel            = 'hanning';
 
     self.spikeTimes   = spikeTimes;
     self.spikeTrain   = spikeTrain;
     self.Fs           = Fs;
     self.range        = range;
+    self.kernel       = kernel;
   end
 
 end % methods
