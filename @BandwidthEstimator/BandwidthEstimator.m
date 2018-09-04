@@ -54,10 +54,10 @@ methods
     % if kernel is a character vector, find the appropriate static method
     % otherwise, kernel should be a function handle
 
-    if ischar(self.kernel)
-      self.kernel   = str2func(['BandwidthEstimator.' self.kernel]);
+    if ischar(value)
+      self.kernel   = str2func(['BandwidthEstimator.' value]);
     else
-      self.kernel   = self.kernel;
+      self.kernel   = value;
     end
 
   end % function
