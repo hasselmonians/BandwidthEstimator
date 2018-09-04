@@ -83,7 +83,7 @@ function [estimate, kmax, loglikelihoods, bandwidths, CI] = cvKernel(self, paral
 
         %Set center point to zero for leave one out filter
         mid=(w-1)/2+1;
-        k=hanning(w);
+        k=kernel(w);
         k(mid)=0;
 
         %Normalize the notch kernel
@@ -105,7 +105,7 @@ function [estimate, kmax, loglikelihoods, bandwidths, CI] = cvKernel(self, paral
             bandwidths(wn)=bandwidths(wn)+1;
         end
         w=bandwidths(wn);
-        
+
         % set up the kernel
         k       = kernel(w);
         mid     = (w - 1) / 2 + 1;

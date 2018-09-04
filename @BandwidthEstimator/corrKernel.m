@@ -4,6 +4,7 @@ function [estimate, kmax, logmaxcorr, corr, lag] = corrKernel(self, signal, para
   spikeTrain  = self.spikeTrain;
   Fs          = self.Fs;
   dt          = 1 / Fs;
+  kernel      = self.kernel;
 
   if ~any(spikeTrain)
       estimate=zeros(1,length(spikeTrain));
@@ -55,7 +56,7 @@ function [estimate, kmax, logmaxcorr, corr, lag] = corrKernel(self, signal, para
 
         % set up hanning filter kernel
         w = bandwidths(wn);
-        k = hanning(w);
+        k = kernel(w);
         k = k / sum (k);      % normalize
 
         % perform leave one out convolution
@@ -74,7 +75,7 @@ function [estimate, kmax, logmaxcorr, corr, lag] = corrKernel(self, signal, para
 
       % set up hanning filter kernel
       w = bandwidths(wn);
-      k = hanning(w);
+      k = kernel(w);
       k = k / sum (k);      % normalize
 
       % perform leave one out convolution
