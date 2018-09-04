@@ -48,6 +48,20 @@ methods
 
   end % function
 
+  % set the kernel to a function handle
+  function self = set.kernel(self, value)
+
+    % if kernel is a character vector, find the appropriate static method
+    % otherwise, kernel should be a function handle
+
+    if ischar(self.kernel)
+      self.kernel   = str2func(['BandwidthEstimator.' self.kernel]);
+    else
+      self.kernel   = self.kernel;
+    end
+    
+  end % function
+
 end % methods
 
 methods (Static)
