@@ -30,7 +30,7 @@ function [estimate, kmax, loglikelihoods, bandwidths, CI] = cvKernel(self, paral
   spikeTrain  = self.spikeTrain;
   Fs          = self.Fs;
   dt          = 1 / Fs;
-  kernel      = best.kernel;
+  kernel      = self.kernel;
 
   if ~any(spikeTrain)
       estimate=zeros(1,length(spikeTrain));

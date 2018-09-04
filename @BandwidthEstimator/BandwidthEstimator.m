@@ -37,7 +37,7 @@ methods
     end
 
     if (value > 0)
-      self.range = 3:2:value
+      self.range = 3:2:value;
     else
       error('Property value must be positive')
     end
@@ -59,7 +59,7 @@ methods
     else
       self.kernel   = self.kernel;
     end
-    
+
   end % function
 
 end % methods
