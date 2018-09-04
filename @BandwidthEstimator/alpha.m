@@ -3,7 +3,7 @@ function w = alpha(k, tau)
   % tau is the time-constant of the alpha function
 
   if nargin < 2
-    tau = 1;
+    tau = sqrt(sqrt(k));
   end
 
   if isscalar(k)
