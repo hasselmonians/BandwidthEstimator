@@ -29,6 +29,25 @@ methods
     self.kernel       = kernel;
   end
 
+  % set the range to 3 : 2 : (value / best.Fs), where value is in seconds
+  function self = set.range(self, value, scaled)
+
+    if nargin < 3
+      scaled = true; % should the range be scaled by the sampling rate?
+    end
+
+    if (value > 0)
+      self.range = 3:2:value
+    else
+      error('Property value must be positive')
+    end
+
+    if (scaled == true)
+      self.range = self.range / self.Fs;
+    end
+
+  end % function
+
 end % methods
 
 methods (Static)
