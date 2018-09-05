@@ -24,9 +24,9 @@ function batchFunction(filename, cellnum, outfile, test)
   best.kernel = 'alpha';
 
   % perform bandwidth parameter estimate with MLE/CV
-  [estimate, kmaxMLE, loglikelihoods, bandwidths, CI] = best.cvKernel(true);
+  [~, kmax, ~, ~, CI] = best.cvKernel(true);
 
   % save the data
-  csvwrite(outfile);
+  csvwrite(outfile, [kmax; CI]);
 
 end % function
