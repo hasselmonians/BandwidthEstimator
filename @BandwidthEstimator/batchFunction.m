@@ -26,6 +26,6 @@ function batchFunction(filename, cellnum, outfile, test)
   [~, kmax, ~, ~, CI] = best.cvKernel(true);
 
   % save the data
-  csvwrite(outfile, [kmax; CI]);
+  csvwrite(outfile, [kmax CI]);
 
 end % function
