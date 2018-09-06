@@ -15,26 +15,22 @@
 function result=kconv(self, k)
 
   % the variable arguments are passed to the kernel function
+  % k is the length of the kernel window in time steps, it should be a scalar value
 
-data  = self.spikeTrain;
-dt    = 1 / self.Fs;
+data    = self.spikeTrain;
+dt      = 1 / self.Fs;
+kernel  = self.kernel;
 
-data=data(:)';
-k=k(:)';
+data    = data(:)';
+k       = vectorise(kernel(k)); % k becomes the vector that defines the window
+% normalize k
+k       = k / sum(k);
 
-% %Assume dt=1 if none specified
-% if nargin==2
-%     dt=1;
-% end
-
-%Require an odd length window
+% require an odd length window
 w=length(k);
 if mod(w,2)==0
     error('Window must be of an odd length');
 end
-
-%Normalize k
-k=k/sum(k);
 
 %Perform the standard convolution
 result=conv(data,k/dt,'same');
@@ -42,8 +38,6 @@ result=conv(data,k/dt,'same');
 %Define the overlap size and window midpoint
 snip=(w-1)/2;
 mid=snip+1;
-
-
 
 %Fix the ends to remove the end effects
 if w<length(data)
