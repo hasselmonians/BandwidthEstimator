@@ -81,13 +81,12 @@ function [estimate, kmax, loglikelihoods, bandwidths, CI] = cvKernel(self, paral
         end
         w=bandwidths(wn);
 
-        %Set center point to zero for leave one out filter
-        mid=(w-1)/2+1;
-        k=kernel(w);
-        k(mid)=0;
-
-        %Normalize the notch kernel
-        k=k/sum(k);
+        % set center point to zero for leave one out filter
+        k       = vectorise(kernel(w))';
+        mid     = (w-1)/2+1;
+        k(mid)  = 0;
+        % normalize the notch kernel
+        k       = k/sum(k);
 
         %Perform leave one out convolution
         l1o = self.kconv(k);
@@ -106,12 +105,12 @@ function [estimate, kmax, loglikelihoods, bandwidths, CI] = cvKernel(self, paral
         end
         w=bandwidths(wn);
 
-        % set up the kernel
-        k       = kernel(w);
-        mid     = (w - 1) / 2 + 1;
+        % set center point to zero for leave one out filter
+        k       = vectorise(kernel(w));
+        mid     = (w-1)/2+1;
         k(mid)  = 0;
-        % normalize the kernel
-        k       = k / sum(k);
+        % normalize the notch kernel
+        k       = k/sum(k);
 
         %Perform leave one out convolution
         l1o = self.kconv(k);
