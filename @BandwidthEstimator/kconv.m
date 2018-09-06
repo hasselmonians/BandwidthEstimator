@@ -14,47 +14,56 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function result=kconv(self, k)
 
-  % the variable arguments are passed to the kernel function
-  % k is the length of the kernel window in time steps, it should be a scalar value
+  % convolves self.spikeTrain with a kernel k
+  % fixes the edges and returns a vector the same size as self.spikeTrain
+  % if k is a scalar, the window is generated using self.kernel(k)
+  % if k is a vector, the window is k
 
-data    = self.spikeTrain;
-dt      = 1 / self.Fs;
-kernel  = self.kernel;
+  data    = self.spikeTrain;
+  dt      = 1 / self.Fs;
+  kernel  = self.kernel;
 
-data    = data(:)';
-k       = vectorise(kernel(k)); % k becomes the vector that defines the window
-% normalize k
-k       = k / sum(k);
+  data    = data(:)';
 
-% require an odd length window
-w=length(k);
-if mod(w,2)==0
-    error('Window must be of an odd length');
-end
+  % if k is scalar, generate a vector that defines the window
+  if isscalar(k)
+    k       = vectorise(kernel(k)); % k becomes the vector that defines the windo
+  end % otherwise, k is a vector, and will be used as the window
 
-%Perform the standard convolution
-result=conv(data,k/dt,'same');
+  % normalize k
+  k       = k / sum(k);
 
-%Define the overlap size and window midpoint
-snip=(w-1)/2;
-mid=snip+1;
+  % require an odd length window
+  w=length(k);
+  if mod(w,2)==0
+      error('Window must be of an odd length');
+  end
 
-%Fix the ends to remove the end effects
-if w<length(data)
-wval=[1:w (length(data)-w):length(data)];
-else
-    wval=1:length(data);
-end
+  %Perform the standard convolution
+  result=conv(data,k/dt,'same');
 
-for wsize=wval
-    %Calculate data start and end, dealing with boundaries
-    ds=max(wsize-snip,1);
-    de=min(wsize+snip,length(data));
+  %Define the overlap size and window midpoint
+  snip=(w-1)/2;
+  mid=snip+1;
 
-    %Calculate kernel start and end, dealing with boundaries
-    ks=max(mid-(wsize-1),1);
-    ke=min(mid+length(data)-wsize,w);
+  %Fix the ends to remove the end effects
+  if w<length(data)
+  wval=[1:w (length(data)-w):length(data)];
+  else
+      wval=1:length(data);
+  end
 
-    %Calculate the leave-one out convolution
-    result(wsize)=sum(data(ds:de).*k(ks:ke)/sum(k(ks:ke))/dt);
-end
+  for wsize=wval
+      %Calculate data start and end, dealing with boundaries
+      ds=max(wsize-snip,1);
+      de=min(wsize+snip,length(data));
+
+      %Calculate kernel start and end, dealing with boundaries
+      ks=max(mid-(wsize-1),1);
+      ke=min(mid+length(data)-wsize,w);
+
+      %Calculate the leave-one out convolution
+      result(wsize)=sum(data(ds:de).*k(ks:ke)/sum(k(ks:ke))/dt);
+  end
+
+end % function
