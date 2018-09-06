@@ -30,7 +30,6 @@ k=k(:)';
 %Require an odd length window
 w=length(k);
 if mod(w,2)==0
-    keyboard
     error('Window must be of an odd length');
 end
 
