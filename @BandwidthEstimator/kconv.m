@@ -28,6 +28,8 @@ function result=kconv(self, k)
   % if k is scalar, generate a vector that defines the window
   if isscalar(k)
     k       = vectorise(kernel(k))'; % k becomes the vector that defines the window
+  else
+    k       = vectorise(k)';
   end % otherwise, k is a vector, and will be used as the window
 
   % normalize k
@@ -61,7 +63,7 @@ function result=kconv(self, k)
       %Calculate kernel start and end, dealing with boundaries
       ks=max(mid-(wsize-1),1);
       ke=min(mid+length(data)-wsize,w);
-      
+
       %Calculate the leave-one out convolution
       result(wsize)=sum(data(ds:de).*k(ks:ke)/sum(k(ks:ke))/dt);
   end
