@@ -2,7 +2,7 @@
 A simple package that implements the maximum-likelihood leave-one-out cross-validated bandwidth parameter estimation algorithm from [Prerau & Eden 2011](https://www.ncbi.nlm.nih.gov/pubmed/21732865).
 
 ## How do I install this?
-Clone the repository or download and extract the zip. `getSpikeTrain` and `getSpikeTimes` requires `CMBHOME`, since they get the spike times from a `Session` object.
+Clone the repository or download and extract the zip. `getSpikeTrain` and `getSpikeTimes` requires [CMBHOME](https://github.com/hasselmonians/CMBHOME), since they get the spike times from a `Session` object.
 
 ## What does this do?
 Firing rate is a convenient mathematical construct useful in analyzing spike trains. It's believed that firing rate (measured in number of spikes per unit time) plays an important role in neural coding. Since actual spike-timing is somewhat stochastic, determining the firing rate is often non-trivial. A [2011 paper](https://www.ncbi.nlm.nih.gov/pubmed/21732865) describes a method by which Bayesian likelihood analysis and leave-one-out cross-validation can be used to determine an optimal bandwidth parameter for use in turning point-process spike-train data into smoothed firing rate vs. time curves.
