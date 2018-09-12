@@ -22,7 +22,8 @@ best = BandwidthEstimator(root)
 
 The core functionality of this package is in the `cvKernel` and `kconv` functions, written by Michael Prerau (c) 2011. These functions have been heavily modified from their original forms to be methods of the `BandwidthEstimator` class.
 
-* `cvKernel` computes the maximum likelihood estimate, the bandwidth parameter associated with the MLE, the log likelihoods for the range of tested bandwidths, and the tested bandwidths themselves. It takes a spike train, the time step, and the bandwidth range to be tested, in time-steps. It defaults to 3:2:N where N is 3/2 the length of the spike train. Generally, this is much too long, and it is advisable to put limits on the range of tested bandwidths.
+### Performing the Maximum Likelihood Estimate with Cross-Validation
+`cvKernel` computes the maximum likelihood estimate, the bandwidth parameter associated with the MLE, the log likelihoods for the range of tested bandwidths, and the tested bandwidths themselves. It takes a spike train, the time step, and the bandwidth range to be tested, in time-steps. It defaults to 3:2:N where N is 3/2 the length of the spike train. Generally, this is much too long, and it is advisable to put limits on the range of tested bandwidths.
 
 For example, to test bandwidths up to 60 seconds:
 ```matlab
@@ -30,7 +31,8 @@ best.range = 3:2:(60 * best.Fs);
 [estimate, kmax, loglikelihoods, bandwidths, CI] = best.cvKernel();
 ```
 
-* `kconv` performs the kernel convolution. It is called within `cvKernel`. Outside of the algorithm, `kconv` functions, essentially, as a wrapper for `MATLAB`'s `conv` function that post-processes the signal to remove edge effects. It can be called as a method of the `BandwidthEstimator` object with either a scalar or vector argument. If the argument is an odd scalar integer, the convolution will use a kernel constructed using the function handle stored in the `kernel` field of the object. If the argument is a vector, the `kernel` field is ignored and the vector is treated as the kernel vector for the convolution. In either case, it relies on the fields of the object for the signal, time step, etc.
+### Performing a Single Convolution
+`kconv` performs the kernel convolution. It is called within `cvKernel`. Outside of the algorithm, `kconv` functions, essentially, as a wrapper for `MATLAB`'s `conv` function that post-processes the signal to remove edge effects. It can be called as a method of the `BandwidthEstimator` object with either a scalar or vector argument. If the argument is an odd scalar integer, the convolution will use a kernel constructed using the function handle stored in the `kernel` field of the object. If the argument is a vector, the `kernel` field is ignored and the vector is treated as the kernel vector for the convolution. In either case, it relies on the fields of the object for the signal, time step, etc.
 
 For example, to test a bandwidth of 60 seconds:
 ```matlab
@@ -39,6 +41,6 @@ estimate = best.kconv(hanning(60*best.Fs));
 ```
 > Note that it is generally best practice for the argument to be in units of timesteps (and thus a positive, odd, integral, scalar), since there is little guarantee that `60*best.Fs` will return an odd integer.
 
-* `cvExample` is a script that demonstrates the algorithm. I doubt it works right now.
+`cvExample` is a script that demonstrates the algorithm. I doubt it works right now.
 
 The `batchFunction` is used for generating batch scripts with [RatCatcher](https://github.com/hasselmonians/RatCatcher).
