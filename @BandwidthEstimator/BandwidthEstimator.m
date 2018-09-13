@@ -62,10 +62,12 @@ end % methods
 
 methods (Static)
 
-  spikeTrain = getSpikeTrain(spikeTimes, timestep)
-  batchFunction(filename, cellnum, outfile, test)
-  result = alpha(k, tau)
-  w = hanning(n)
+  spikeTrain   = getSpikeTrain(spikeTimes, timestep)
+                 batchFunction(filename, cellnum, outfile, test)
+  result       = alpha(k, tau)
+  w            = hanning(n)
+  D            = taper(signal, ratio)
+  [yvar, xvar] = histogram2(x,y,edges)
 
 end % static methods
 
