@@ -1,4 +1,4 @@
-function [stats] = fit(self, data)
+function [stats] = fit(self, data, verbose)
   % fits the firing rate versus the speed of a cell
 
 % Temporally binned firing rate versus running speed: Firing rate was fit using a maximum likelihood estimator. The instantaneous running speed was taken from the Kalman velocity, based on displacement in location between each recorded tracking sample (Fyhn et al, 2004). The number of spikes occurring in each video frame (30Hz) was counted. Only frames with instantaneous velocity greater than 2 cm sec-1 and less than the 95th percentile of running speeds were considered, in order to avoid under sampled regions. The firing rate parameter (lambda) was assumed to follow one of two functions of running speed:
@@ -16,19 +16,32 @@ function [stats] = fit(self, data)
   % Outputs:
     % stats: a struct full of statistics
 
+    if nargin < 3
+      verbose = false;
+    end
+
   % process the inputs
   if class(data) == 'CMBHOME.Session'
     % assume is a Session object that matches the BandwidthEstimator object
     speed = data.vel;
+    if verbose
+      disp('[INFO] interpreted ''data'' as a ''CMBHOME.Session'' object')
+    end
   elseif class(data) == 'double' && length(data) > 1
     % assume is the speed vector
     speed = data;
+    if verbose
+      disp('[INFO] interpreted ''data'' as a ''vector'' ')
+    end
   elseif isstruct(data)
     % try to find a reasonable field which contains the speed and use that
     names = fieldnames(data)
     index = find(contains(names, {'speed', 'spd', 'vel', 'velocity'}, 'IgnoreCase', true));
     try
       speed = data.(names{index(1)});
+      if verbose
+        disp(['[INFO] interpreted ''data'' as a ''struct'' with field '' ' names{index(1)} ' '' '])
+      end
     catch
       disp('[ERROR] I don''t recognize any of the fields in ''data''')
       stats = [];
@@ -76,6 +89,10 @@ function [stats] = fit(self, data)
 
   %% Linear Fit
 
+  if verbose
+    disp('[INFO] computing the linear fit')
+  end
+
   % linear fit of binned data
   linfit        = polyfit(speed_bin(1:end-1), frequency(1:end-1), 1);
   linear        = struct;
@@ -98,6 +115,10 @@ function [stats] = fit(self, data)
 
   %% Saturating Exponential Fit
 
+  if verbose
+    disp('[INFO] computing the saturating exponential fit')
+  end
+
   % set up the exponential fit
   expfit        = fittype('d - a*exp(-b*x)', 'independent', 'x', 'coefficients', {'d', 'a', 'b'});
   options       = fitoptions(expfit);
@@ -108,7 +129,9 @@ function [stats] = fit(self, data)
 
   % repeat 100 times, take the best result
   for i=1:100
-    textbar(i, 100);
+    if verbose
+      spinner()
+    end
     [fitojb2, gof2] = fit(speed_bin(~isnan(frequency))', frequency(~isnan(frequency))', expfit, options);
     if gof2.rsquare > gof.rsquare
        fitojb   = fitojb2;
@@ -134,6 +157,10 @@ function [stats] = fit(self, data)
 
   %% Linear Fit vs. Exponential Fit
 
+  if verbose
+    disp('[INFO] computing the linear vs. exponential statistics')
+  end
+
   F             = ...
     max(((sum((polyval(linfit,speed_bin(1:end-1),2)-frequency(1:end-1)).^2)-...
     sum((fitojb(speed_bin(~isnan(frequency)))-frequency(1:end-1)).^2))/1)/...
@@ -145,6 +172,10 @@ function [stats] = fit(self, data)
   linexp.Fp     = P;
 
   %% Package Output
+
+  if verbose
+    disp('[INFO] packaging output')
+  end
 
   stats         = struct;
   stats.linear  = linear;
