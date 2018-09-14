@@ -153,5 +153,6 @@ function [stats] = fit(self, data)
   stats.frequency = frequency;
   stats.freq_std = freq_std;
   stats.freq_avg = freq_avg;
+  stats.speed_bin = speed_bin;
 
 end % function
