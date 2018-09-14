@@ -6,8 +6,6 @@ function [stats] = fit(self, data)
 % Linear: lambda(dach) = b(dach) *v + a(dach)
 %
 % Saturating exponential: lambda(dach) = k(dach) -m(dach)*e^(-q(dach)*v)
-%
-% Using a Poisson link function, the underlying firing rate parameter was fit using the mle function within the MATLAB statistics toolbox. The log-likelihood for each of these generating functions was calculated and used to determine the F-value and p-score of each fit compared to the uniform fit, as well as a non-nested comparison of the saturating exponential to linear functions. r2 values were calculated as the variance in the instantaneous firing rate explained by the model, divided by the variance in the firing rate (Hinman et al., 2016, supplementary methods).
 
   % Arguments:
     % self: the BandwidthEstimator object
@@ -45,50 +43,55 @@ function [stats] = fit(self, data)
   assert(length(speed) == length(self.spikeTrain), 'speed and spike train must have the same length')
 
   % only consider speed above 2 cm/sec and less than the 95% to avoid undersampled regions
-  speed_dim     = vectorise(2:1:quantile(speed, 0.95))';
+  speed_bin     = vectorise(2:1:quantile(speed, 0.95))';
   % bin index into which that speed value fits
-  % e.g. if speed(i) is in speed_dim(j) then speed_idx(i) = j
-  speed_idx     = discretize(speed, speed_dim);
+  % e.g. if speed(i) is in speed_bin(j) then speed_idx(i) = j
+  speed_idx     = discretize(speed, speed_bin);
 
   % number of spikes total that occur during a given speed bin
-  count         = zeros(size(speed_dim));
-  for ii = 1:length(speed_dim)
-    count(ii)   = sum(self.spikeTrain(find(speed_idx == speed_dim(ii))));
+  for ii = 1:length(speed_bin)-1
+    tstep_idx   = find(speed_idx == speed_bin(ii));
+    count(ii)   = sum(self.spikeTrain(tstep_idx));
+    stddev(ii)  = std(self.spikeTrain(tstep_idx));
   end
 
   % number of frames in each bin
-  occupancy     = histcounts(speed, speed_dim);
+  occupancy     = histcounts(speed, speed_bin);
 
   % firing rate in each speed bin
   % this is the total number of spikes per speed bin divided by the number of time-bins times the sample rate
   frequency     = count ./ (occupancy / self.Fs);
+  freq_std      = stddev ./ (occupancy / self.Fs);
 
   % average firing rate
-  % calculates the duration of the sesdsion by time frames with small differences
+  % calculates the duration of the session by time frames with small differences
   freq_avg      = numel(self.spikeTimes) / (sum(abs(diff(self.timestamps) - 1/self.Fs) < 1/self.Fs) / self.Fs);
 
   % number of spikes in each frame
   count2        = histcounts(self.spikeTimes, self.timestamps);
 
+  % housekeeping
+  speed_bin     = speed_bin(1:end-1); % snip off end to fix off-by-one error
+  warning off curvefit:fit:noStartPoint;
+
   %% Linear Fit
 
   % linear fit of binned data
-  keyboard
-  linfit        = polyfit(speed_dim(1:end-1), frequency(1:end-1), 1);
+  linfit        = polyfit(speed_bin(1:end-1), frequency(1:end-1), 1);
   linear        = struct;
   linear.intercept = linfit(2); % y-intercept
   linear.slope  = linfit(1); % slope in Hz / (cm/s)
 
   % correlations
-  [R, P]        = corrcoef([speed_dim(1:end-1), frequency(1:end-1)]);
+  [R, P]        = corrcoef(speed_bin(1:end-1), frequency(1:end-1));
   linear.R      = R(1,2); % Pearson's r
   linear.Rp     = P(1,2); % p-value
   % R-squared test
-  R2            = 1 - sum((polyval(linfit,speed_dim(1:end-1),2)-frequency(1:end-1)).^2) / sum((frequency(1:end-1) - mean(frequency(1:end-1))).^2); % Coefficient of determination
+  R2            = 1 - sum((polyval(linfit,speed_bin(1:end-1),2)-frequency(1:end-1)).^2) / sum((frequency(1:end-1) - mean(frequency(1:end-1))).^2); % Coefficient of determination
   linear.r2     = R2;
 
   % F-test with estimated dispersion
-  F             = ((sum((frequency(1:end-1) - mean(frequency(1:end - 1))).^2) - sum((polyval(linfit,speed_dim(1:end - 1), 2) - frequency(1:end - 1)).^2)) / 1) / (sum((polyval(linfit, speed_dim(1:end - 1), 2) - frequency(1:end - 1)).^2) / (numel(frequency) - 1 - 2));
+  F             = ((sum((frequency(1:end-1) - mean(frequency(1:end - 1))).^2) - sum((polyval(linfit,speed_bin(1:end - 1), 2) - frequency(1:end - 1)).^2)) / 1) / (sum((polyval(linfit, speed_bin(1:end - 1), 2) - frequency(1:end - 1)).^2) / (numel(frequency) - 1 - 2));
   P             = 1-fcdf(F, 1,numel(frequency)-1-2);
   linear.F      = F;
   linear.Fp     = P;
@@ -101,12 +104,12 @@ function [stats] = fit(self, data)
   options.lower = [0 0 0];
   options.upper = [1.5*nanmax(frequency) Inf Inf];
   % check that it works
-  [fitobj, gof] = fit(speed_dim(~isnan(frequency)), frequency(~isnan(frequency)), f, options);
+  [fitobj, gof] = fit(speed_bin(~isnan(frequency))', frequency(~isnan(frequency))', expfit, options);
 
   % repeat 100 times, take the best result
   for i=1:100
     textbar(i, 100);
-    [fitojb2, gof2] = fit(speed_dim(~isnan(frequency)), frequency(~isnan(frequency)), f, options);
+    [fitojb2, gof2] = fit(speed_bin(~isnan(frequency))', frequency(~isnan(frequency))', expfit, options);
     if gof2.rsquare > gof.rsquare
        fitojb   = fitojb2;
        gof      = gof2;
@@ -120,11 +123,11 @@ function [stats] = fit(self, data)
   satexp.b      = fitobj.b;
 
   % R-squared test
-  R2            =  1 - sum((fitobj(speed_dim(~isnan(frequency))) - frequency(~isnan(frequency))).^2) / sum((frequency(1:end - 1) - mean(frequency(1:end - 1))).^2);
+  R2            =  1 - sum((fitobj(speed_bin(~isnan(frequency))) - frequency(~isnan(frequency))).^2) / sum((frequency(1:end - 1) - mean(frequency(1:end - 1))).^2);
   satexp.R2     = R2;
 
   % F-test
-  F             = ((sum((frequency(1:end-1)-mean(frequency(1:end-1))).^2) - sum((fitobj(speed_dim(~isnan(frequency))) - frequency(1:end - 1)).^2))/2) / (sum((fitobj(speed_dim(~isnan(frequency))) - frequency(1:end - 1)).^2) / (numel(frequency)-1-3));
+  F             = ((sum((frequency(1:end-1)-mean(frequency(1:end-1))).^2) - sum((fitobj(speed_bin(~isnan(frequency))) - frequency(1:end - 1)).^2))/2) / (sum((fitobj(speed_bin(~isnan(frequency))) - frequency(1:end - 1)).^2) / (numel(frequency)-1-3));
   P             = 1-fcdf(F,2,numel(frequency)-1-3);
   satexp.F      = F;
   satexp.Fp     = P;
@@ -132,9 +135,9 @@ function [stats] = fit(self, data)
   %% Linear Fit vs. Exponential Fit
 
   F             = ...
-    max(((sum((polyval(linfit,speed_dim(1:end-1),2)-frequency(1:end-1)).^2)-...
-    sum((fitojb(speed_dim(~isnan(frequency)))-frequency(1:end-1)).^2))/1)/...
-    (sum((fitojb(speed_dim(~isnan(frequency)))-frequency(1:end-1)).^2)/(numel(frequency)-1-3)),0);
+    max(((sum((polyval(linfit,speed_bin(1:end-1),2)-frequency(1:end-1)).^2)-...
+    sum((fitojb(speed_bin(~isnan(frequency)))-frequency(1:end-1)).^2))/1)/...
+    (sum((fitojb(speed_bin(~isnan(frequency)))-frequency(1:end-1)).^2)/(numel(frequency)-1-3)),0);
   P             = 1-fcdf(F, 1, numel(count2)-3);
 
   linexp        = struct;
@@ -147,5 +150,8 @@ function [stats] = fit(self, data)
   stats.linear  = linear;
   stats.satexp  = satexp;
   stats.linexp  = linexp;
+  stats.frequency = frequency;
+  stats.freq_std = freq_std;
+  stats.freq_avg = freq_avg;
 
 end % function
