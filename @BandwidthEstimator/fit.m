@@ -130,7 +130,7 @@ function [stats] = fit(self, data, verbose)
   % repeat 100 times, take the best result
   for i=1:100
     if verbose
-      spinner()
+      texbar(i, 100);
     end
     [fitojb2, gof2] = fit(speed_bin(~isnan(frequency))', frequency(~isnan(frequency))', expfit, options);
     if gof2.rsquare > gof.rsquare
