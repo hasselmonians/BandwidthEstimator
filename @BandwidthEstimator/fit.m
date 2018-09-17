@@ -126,7 +126,7 @@ function [stats] = fit(self, data, verbose)
   % compare both models using the F-test and p-value
   num           = (satexp.SSE - linear.SSE) / (linear.NumCoefficients - satexp.NumCoefficients);
   denom         = linear.SSE / linear.DFE;
-  F             = numerator / denominator;
+  F             = num / denom;
   p             = 1 - fcdf(F, linear.NumCoefficients - satexp.NumCoefficients, linear.DFE);
 
   % compute the Akaike and Bayesian inference criteria
