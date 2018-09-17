@@ -129,6 +129,11 @@ function [stats] = fit(self, data, verbose)
   F             = num / denom;
   p             = 1 - fcdf(F, linear.NumCoefficients - satexp.NumCoefficients, linear.DFE);
 
+  % the saturating exponential model converges to a linear mode as b(3) -> 0
+  % in a second-order approximation, it converges towards a quadratic model
+  % for these reasons, the null hypothesis is a linear fit
+  % that is, p = NaN implies a linear fit
+
   % compute the Akaike and Bayesian inference criteria
   % lower values mean better inferential power
   % linear model is aic(:, 1), saturating exponential model is aic(:, 2)
