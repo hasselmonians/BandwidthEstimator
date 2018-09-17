@@ -1,11 +1,10 @@
 function [stats] = fit(self, data, verbose)
   % fits the firing rate versus the speed of a cell
-  keyboard
-% Temporally binned firing rate versus running speed: Firing rate was fit using a maximum likelihood estimator. The instantaneous running speed was taken from the Kalman velocity, based on displacement in location between each recorded tracking sample (Fyhn et al, 2004). The number of spikes occurring in each video frame (30Hz) was counted. Only frames with instantaneous velocity greater than 2 cm sec-1 and less than the 95th percentile of running speeds were considered, in order to avoid under sampled regions. The firing rate parameter (lambda) was assumed to follow one of two functions of running speed:
-%
-% Linear: lambda(dach) = b(dach) *v + a(dach)
-%
-% Saturating exponential: lambda(dach) = k(dach) -m(dach)*e^(-q(dach)*v)
+  % Temporally binned firing rate versus running speed: Firing rate was fit using a maximum likelihood estimator. The instantaneous running speed was taken from the Kalman velocity, based on displacement in location between each recorded tracking sample (Fyhn et al, 2004). The number of spikes occurring in each video frame (30Hz) was counted. Only frames with instantaneous velocity greater than 2 cm sec-1 and less than the 95th percentile of running speeds were considered, in order to avoid under sampled regions. The firing rate parameter (lambda) was assumed to follow one of two functions of running speed:
+  %
+  % Linear: lambda(dach) = b(dach) *v + a(dach)
+  %
+  % Saturating exponential: lambda(dach) = k(dach) -m(dach)*e^(-q(dach)*v)
 
   % Arguments:
     % self: the BandwidthEstimator object
@@ -85,6 +84,7 @@ function [stats] = fit(self, data, verbose)
 
   % housekeeping
   speed_bin     = speed_bin(1:end-1); % snip off end to fix off-by-one error
+  T             = table(speed_bin(1:end-1)', frequency(1:end-1)', 'VariableNames', {'SpeedBins', 'FiringRate'});
   warning off curvefit:fit:noStartPoint;
 
   %% Linear Fit
@@ -93,25 +93,13 @@ function [stats] = fit(self, data, verbose)
     disp('[INFO] computing the linear fit')
   end
 
-  % linear fit of binned data
-  linfit        = polyfit(speed_bin(1:end-1), frequency(1:end-1), 1);
-  linear        = struct;
-  linear.intercept = linfit(2); % y-intercept
-  linear.slope  = linfit(1); % slope in Hz / (cm/s)
+  % linear fit of binned data using fitlm
+  linear        = fitlm(T, 'linear');
+  quadra        = fitlm(T, 'quadratic');
 
-  % correlations
-  [R, P]        = corrcoef(speed_bin(1:end-1), frequency(1:end-1));
-  linear.R      = R(1,2); % Pearson's r
-  linear.Rp     = P(1,2); % p-value
-  % R-squared test
-  R2            = 1 - sum((polyval(linfit,speed_bin(1:end-1),2)-frequency(1:end-1)).^2) / sum((frequency(1:end-1) - mean(frequency(1:end-1))).^2); % Coefficient of determination
-  linear.r2     = R2;
-
-  % F-test with estimated dispersion
-  F             = ((sum((frequency(1:end-1) - mean(frequency(1:end - 1))).^2) - sum((polyval(linfit,speed_bin(1:end - 1), 2) - frequency(1:end - 1)).^2)) / 1) / (sum((polyval(linfit, speed_bin(1:end - 1), 2) - frequency(1:end - 1)).^2) / (numel(frequency) - 1 - 2));
-  P             = 1-fcdf(F, 1,numel(frequency)-1-2);
-  linear.F      = F;
-  linear.Fp     = P;
+  if verbose
+    disp(linear)
+  end
 
   %% Saturating Exponential Fit
 
@@ -119,41 +107,15 @@ function [stats] = fit(self, data, verbose)
     disp('[INFO] computing the saturating exponential fit')
   end
 
-  % set up the exponential fit
-  expfit        = fittype('d - a*exp(-b*x)', 'independent', 'x', 'coefficients', {'d', 'a', 'b'});
-  options       = fitoptions(expfit);
-  options.lower = [0 0 0];
-  options.upper = [1.5*nanmax(frequency) Inf Inf];
-  % check that it works
-  [fitobj, gof] = fit(speed_bin(~isnan(frequency))', frequency(~isnan(frequency))', expfit, options);
+  % saturating exponential fit of binned data using fitnlm
+  modelfun      = @(b, x) b(1) + b(2) * exp(- b(3) * x(:,1));
+  % defaults to constant model: b(1) + b(2)
+  beta0         = [linear.Coefficients.Estimate(1), linear.Coefficients.Estimate(2), 0];
+  satexp        = fitnlm(T, modelfun, beta0);
 
-  % repeat 100 times, take the best result
-  for i=1:100
-    if verbose
-      texbar(i, 100);
-    end
-    [fitojb2, gof2] = fit(speed_bin(~isnan(frequency))', frequency(~isnan(frequency))', expfit, options);
-    if gof2.rsquare > gof.rsquare
-       fitojb   = fitojb2;
-       gof      = gof2;
-     end
+  if verbose
+    disp(satexp);
   end
-
-  % calculate statistics
-  satexp        = struct;
-  satexp.d      = fitobj.d;
-  satexp.a      = fitobj.a;
-  satexp.b      = fitobj.b;
-
-  % R-squared test
-  R2            =  1 - sum((fitobj(speed_bin(~isnan(frequency))) - frequency(~isnan(frequency))).^2) / sum((frequency(1:end - 1) - mean(frequency(1:end - 1))).^2);
-  satexp.r2     = R2;
-
-  % F-test
-  F             = ((sum((frequency(1:end-1)-mean(frequency(1:end-1))).^2) - sum((fitobj(speed_bin(~isnan(frequency))) - frequency(1:end - 1)).^2))/2) / (sum((fitobj(speed_bin(~isnan(frequency))) - frequency(1:end - 1)).^2) / (numel(frequency)-1-3));
-  P             = 1-fcdf(F,2,numel(frequency)-1-3);
-  satexp.F      = F;
-  satexp.Fp     = P;
 
   %% Linear Fit vs. Exponential Fit
 
@@ -161,15 +123,23 @@ function [stats] = fit(self, data, verbose)
     disp('[INFO] computing the linear vs. exponential statistics')
   end
 
-  F             = ...
-    max(((sum((polyval(linfit,speed_bin(1:end-1),2)-frequency(1:end-1)).^2)-...
-    sum((fitobj(speed_bin(~isnan(frequency)))-frequency(1:end-1)).^2))/1)/...
-    (sum((fitobj(speed_bin(~isnan(frequency)))-frequency(1:end-1)).^2)/(numel(frequency)-1-3)),0);
-  P             = 1-fcdf(F, 1, numel(count2)-3);
+  % compare both models using the F-test and p-value
+  num           = (satexp.SSE - linear.SSE) / (linear.NumCoefficients - satexp.NumCoefficients);
+  denom         = linear.SSE / linear.DFE;
+  F             = num / denom;
+  p             = 1 - fcdf(F, linear.NumCoefficients - satexp.NumCoefficients, linear.DFE);
 
-  linexp        = struct;
-  linexp.F      = F;
-  linexp.Fp     = P;
+  % the saturating exponential model converges to a linear mode as b(3) -> 0
+  % in a second-order approximation, it converges towards a quadratic model
+  % for these reasons, the null hypothesis is a linear fit
+  % that is, p = NaN implies a linear fit
+
+  % compute the Akaike and Bayesian inference criteria
+  % lower values mean better inferential power
+  % linear model is aic(:, 1), saturating exponential model is aic(:, 2)
+  [aic, bic]    = aicbic([linear.LogLikelihood, satexp.LogLikelihood], [2, 3], length(speed_bin(1:end-1)));
+
+  % check significance of
 
   %% Package Output
 
@@ -180,7 +150,10 @@ function [stats] = fit(self, data, verbose)
   stats         = struct;
   stats.linear  = linear;
   stats.satexp  = satexp;
-  stats.linexp  = linexp;
+  stats.F       = F;
+  stats.p       = p;
+  stats.aic     = aic;
+  stats.bic     = bic;
   stats.frequency = frequency;
   stats.freq_std = freq_std;
   stats.freq_avg = freq_avg;
