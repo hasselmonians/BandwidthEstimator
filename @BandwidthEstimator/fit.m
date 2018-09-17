@@ -145,7 +145,6 @@ function [stats] = fit(self, data, verbose)
   stats         = struct;
   stats.linear  = linear;
   stats.satexp  = satexp;
-  stats.linexp  = linexp;
   stats.F       = F;
   stats.p       = p;
   stats.aic     = aic;
