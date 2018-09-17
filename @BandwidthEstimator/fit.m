@@ -1,6 +1,6 @@
 function [stats] = fit(self, data, verbose)
   % fits the firing rate versus the speed of a cell
-
+  keyboard
 % Temporally binned firing rate versus running speed: Firing rate was fit using a maximum likelihood estimator. The instantaneous running speed was taken from the Kalman velocity, based on displacement in location between each recorded tracking sample (Fyhn et al, 2004). The number of spikes occurring in each video frame (30Hz) was counted. Only frames with instantaneous velocity greater than 2 cm sec-1 and less than the 95th percentile of running speeds were considered, in order to avoid under sampled regions. The firing rate parameter (lambda) was assumed to follow one of two functions of running speed:
 %
 % Linear: lambda(dach) = b(dach) *v + a(dach)
@@ -147,7 +147,7 @@ function [stats] = fit(self, data, verbose)
 
   % R-squared test
   R2            =  1 - sum((fitobj(speed_bin(~isnan(frequency))) - frequency(~isnan(frequency))).^2) / sum((frequency(1:end - 1) - mean(frequency(1:end - 1))).^2);
-  satexp.R2     = R2;
+  satexp.r2     = R2;
 
   % F-test
   F             = ((sum((frequency(1:end-1)-mean(frequency(1:end-1))).^2) - sum((fitobj(speed_bin(~isnan(frequency))) - frequency(1:end - 1)).^2))/2) / (sum((fitobj(speed_bin(~isnan(frequency))) - frequency(1:end - 1)).^2) / (numel(frequency)-1-3));
