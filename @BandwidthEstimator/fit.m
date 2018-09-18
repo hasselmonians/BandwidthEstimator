@@ -113,7 +113,10 @@ function [stats] = fit(self, data, verbose)
   modelfun      = @(b, x) b(1) - b(2) * exp(- b(3) * x(:,1));
   % defaults to constant model: b(1) + b(2)
   beta0         = [linear.Coefficients.Estimate(1), linear.Coefficients.Estimate(2), 0];
-  satexp        = fitnlm(T, modelfun, beta0);
+  opts          = statset(@fitnlm);
+  opts.Display  = 'iter';
+  opts.FunValCheck = 'off';
+  satexp        = fitnlm(T, modelfun, beta0, 'Options', opts);
 
   if verbose
     disp(satexp);
