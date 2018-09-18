@@ -108,7 +108,7 @@ function [stats] = fit(self, data, verbose)
     disp('[INFO] computing the saturating exponential fit')
   end
 
-  % saturating exponential fit of binned data using fitnlm
+  % saturating exponential fit of binned data
   modelfun      = @(b, x) b(1) - b(2) * exp(- b(3) * x(:,1));
   % defaults to constant model: b(1) + b(2)
   beta0         = [linear.Coefficients.Estimate(1), linear.Coefficients.Estimate(2), 0];
