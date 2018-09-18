@@ -1,10 +1,6 @@
 function [stats] = fit(self, data, verbose)
   % fits the firing rate versus the speed of a cell
   % Temporally binned firing rate versus running speed: Firing rate was fit using a maximum likelihood estimator. The instantaneous running speed was taken from the Kalman velocity, based on displacement in location between each recorded tracking sample (Fyhn et al, 2004). The number of spikes occurring in each video frame (30Hz) was counted. Only frames with instantaneous velocity greater than 2 cm sec-1 and less than the 95th percentile of running speeds were considered, in order to avoid under sampled regions. The firing rate parameter (lambda) was assumed to follow one of two functions of running speed:
-  %
-  % Linear: lambda(dach) = b(dach) *v + a(dach)
-  %
-  % Saturating exponential: lambda(dach) = k(dach) -m(dach)*e^(-q(dach)*v)
 
   % Arguments:
     % self: the BandwidthEstimator object
@@ -22,7 +18,7 @@ function [stats] = fit(self, data, verbose)
   % process the inputs
   if class(data) == 'CMBHOME.Session'
     % assume is a Session object that matches the BandwidthEstimator object
-    speed = data.vel;
+    speed = data.svel;
     if verbose
       disp('[INFO] interpreted ''data'' as a ''CMBHOME.Session'' object')
     end
@@ -61,7 +57,7 @@ function [stats] = fit(self, data, verbose)
   speed_idx     = discretize(speed, speed_bin);
 
   % number of spikes total that occur during a given speed bin
-  for ii = 1:length(speed_bin)-1
+  for ii = 1:length(speed_bin)
     tstep_idx   = find(speed_idx == speed_bin(ii));
     count(ii)   = sum(self.spikeTrain(tstep_idx));
     stddev(ii)  = std(self.spikeTrain(tstep_idx));
@@ -72,8 +68,8 @@ function [stats] = fit(self, data, verbose)
 
   % firing rate in each speed bin
   % this is the total number of spikes per speed bin divided by the number of time-bins times the sample rate
-  frequency     = count ./ (occupancy / self.Fs);
-  freq_std      = stddev ./ (occupancy / self.Fs);
+  frequency     = count(1:end-1) ./ (occupancy / self.Fs);
+  freq_std      = stddev(1:end-1) ./ (occupancy / self.Fs);
 
   % average firing rate
   % calculates the duration of the session by time frames with small differences
@@ -83,9 +79,8 @@ function [stats] = fit(self, data, verbose)
   count2        = histcounts(self.spikeTimes, self.timestamps);
 
   % housekeeping
-  speed_bin     = speed_bin(1:end-1); % snip off end to fix off-by-one error
-  T             = table(speed_bin(1:end-1)', frequency(1:end-1)', 'VariableNames', {'SpeedBins', 'FiringRate'});
-  warning off curvefit:fit:noStartPoint;
+  % snip off ends to remove zeros
+  T             = table(speed_bin(1:end-2)', frequency(1:end-1)', 'VariableNames', {'SpeedBins', 'FiringRate'});
 
   %% Linear Fit
 
@@ -108,7 +103,7 @@ function [stats] = fit(self, data, verbose)
   end
 
   % saturating exponential fit of binned data using fitnlm
-  modelfun      = @(b, x) b(1) + b(2) * exp(- b(3) * x(:,1));
+  modelfun      = @(b, x) b(1) - b(2) * exp(- b(3) * x(:,1));
   % defaults to constant model: b(1) + b(2)
   beta0         = [linear.Coefficients.Estimate(1), linear.Coefficients.Estimate(2), 0];
   satexp        = fitnlm(T, modelfun, beta0);
