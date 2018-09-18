@@ -51,12 +51,13 @@ function [stats] = fit(self, data, verbose)
 
   assert(length(speed) == length(self.spikeTrain), 'speed and spike train must have the same length')
 
-  % only consider speed above 2 cm/sec and less than the 95% to avoid undersampled regions
-  speed_bin     = vectorise(2:1:quantile(speed, 0.95))';
+  % only consider speed above 0 cm/sec and less than the 95% to avoid undersampled regions
+  % we include the lower bound to incorporate saturating exponential models with
+  speed_bin     = vectorise(0:1:quantile(speed, 0.95))'; % cm/s
 
   % bin index into which that speed value fits
   % e.g. if speed(i) is in speed_bin(j) then speed_idx(i) = j
-  speed_idx     = discretize(speed, speed_bin);
+  speed_idx     = discretize(speed, speed_bin); % unitless
 
   % number of spikes total that occur during a given speed bin (and associated error)
   for ii = 1:length(speed_bin)
@@ -107,7 +108,7 @@ function [stats] = fit(self, data, verbose)
   if verbose
     disp('[INFO] computing the saturating exponential fit')
   end
-
+  keyboard
   % saturating exponential fit of binned data
   modelfun      = @(b, x) b(1) - b(2) * exp(- b(3) * x(:,1));
   % defaults to constant model: b(1) + b(2)
