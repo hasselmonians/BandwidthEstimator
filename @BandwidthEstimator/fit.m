@@ -108,7 +108,7 @@ function [stats] = fit(self, data, verbose)
   if verbose
     disp('[INFO] computing the saturating exponential fit')
   end
-  keyboard
+
   % saturating exponential fit of binned data
   modelfun      = @(b, x) b(1) - b(2) * exp(- b(3) * x(:,1));
   % defaults to constant model: b(1) + b(2)
@@ -118,7 +118,7 @@ function [stats] = fit(self, data, verbose)
   if verbose
     disp(satexp);
   end
-
+  
   %% Linear Fit vs. Exponential Fit
 
   if verbose
