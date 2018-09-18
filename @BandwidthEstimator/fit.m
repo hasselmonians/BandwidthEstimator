@@ -15,7 +15,8 @@ function [stats] = fit(self, data, verbose)
       verbose = false;
     end
 
-  % process the inputs
+  %% Process the Inputs
+
   if class(data) == 'CMBHOME.Session'
     % assume is a Session object that matches the BandwidthEstimator object
     speed = data.svel;
@@ -52,11 +53,12 @@ function [stats] = fit(self, data, verbose)
 
   % only consider speed above 2 cm/sec and less than the 95% to avoid undersampled regions
   speed_bin     = vectorise(2:1:quantile(speed, 0.95))';
+
   % bin index into which that speed value fits
   % e.g. if speed(i) is in speed_bin(j) then speed_idx(i) = j
   speed_idx     = discretize(speed, speed_bin);
 
-  % number of spikes total that occur during a given speed bin
+  % number of spikes total that occur during a given speed bin (and associated error)
   for ii = 1:length(speed_bin)
     tstep_idx   = find(speed_idx == speed_bin(ii));
     count(ii)   = sum(self.spikeTrain(tstep_idx));
@@ -88,12 +90,16 @@ function [stats] = fit(self, data, verbose)
     disp('[INFO] computing the linear fit')
   end
 
-  % linear fit of binned data using fitlm
+  % linear fit of binned data
+  % using Wilkinson notation: firing rate ~ 1 + speed
   linear        = fitlm(T, 'linear');
+  % quadratic fit of binned data
+  % using Wilkinson notation: firing rate ~ 1 + speed + speed^2
   quadra        = fitlm(T, 'quadratic');
 
   if verbose
     disp(linear)
+    disp(quadra)
   end
 
   %% Saturating Exponential Fit
@@ -145,6 +151,7 @@ function [stats] = fit(self, data, verbose)
   stats         = struct;
   stats.linear  = linear;
   stats.satexp  = satexp;
+  stats.quadra  = quadra;
   stats.F       = F;
   stats.p       = p;
   stats.aic     = aic;
