@@ -118,7 +118,7 @@ function [stats] = fit(self, data, verbose)
   if verbose
     disp(satexp);
   end
-  
+
   %% Linear Fit vs. Exponential Fit
 
   if verbose
