@@ -132,7 +132,7 @@ function [stats] = fit(self, data, verbose)
   num           = (satexp.SSE - linear.SSE) / (linear.NumCoefficients - satexp.NumCoefficients);
   denom         = linear.SSE / linear.DFE;
   F             = num / denom;
-  p             = 1 - fcdf(F, linear.NumCoefficients - satexp.NumCoefficients, linear.DFE);
+  p             = 1 - fcdf(F, abs(linear.NumCoefficients - satexp.NumCoefficients), linear.DFE);
 
   % the saturating exponential model converges to a linear mode as b(3) -> 0
   % in a second-order approximation, it converges towards a quadratic model
