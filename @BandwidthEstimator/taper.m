@@ -21,8 +21,8 @@ function D = taper(signal, ratio)
   end
 
   % if signal is a matrix, iterative recursively
+  D = zeros(size(signal));
   if ~isvector(signal)
-    D = zeros(size(signal));
     for ii = 1:size(D, 2)
       D(:, ii) = BandwidthEstimator.taper(signal(:, ii), ratio);
     end
@@ -39,10 +39,10 @@ function D = taper(signal, ratio)
   welch       = 1 - ( ((0:N) - hN) / hN).^2;
 
   % scale the beginning of the signal
-  D(1:hN)     = D(1:hN) .* welch(1:hN);
+  D(1:hN)     = D(1:hN) .* welch(1:hN)';
 
   % scale the end of the signal
   start = length(D) - hN + 1;
-  D(start:end) = D(start:end) .* welch(hN+2:end);
+  D(start:end) = D(start:end) .* welch(hN+2:end)';
 
 end % function
