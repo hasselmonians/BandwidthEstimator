@@ -146,7 +146,7 @@ function [stats] = fit(self, data, verbose)
 
   % perform time-shifted r-squared computation
   R             = corr(vectorise(frequency), vectorise(speed_bin(1:end-1)));
-  shifts        = 1:(30/self.Fs); % 30 s
+  shifts        = 1:round(30*self.Fs); % 30 s
   R_shifted     = NaN(length(shifts), 1);
   for ii = 1:length(shifts)
     R_shifted(ii) = corr(vectorise(shiftSignal(frequency, shifts(ii))), vectorise(speed_bin(1:end-1)));
