@@ -143,13 +143,13 @@ function [stats] = fit(self, data, verbose)
   % lower values mean better inferential power
   % linear model is aic(:, 1), saturating exponential model is aic(:, 2)
   [aic, bic]    = aicbic([linear.LogLikelihood, satexp.LogLikelihood], [2, 3], length(speed_bin(1:end-1)));
-
+  
   % perform time-shifted r-squared computation
-  R             = corr(vectorise(frequency), vectorise(speed));
-  shifts        = 1:(30/best.Fs); % 30 s
+  R             = corr(vectorise(frequency), vectorise(speed_bin(1:end-1)));
+  shifts        = 1:(30/self.Fs); % 30 s
   R_shifted     = NaN(length(shifts), 1);
   for ii = 1:length(shifts)
-    R_shifted(ii) = corr(shiftSignal(frequency, shifts(ii)), speed);
+    R_shifted(ii) = corr(vectorise(shiftSignal(frequency, shifts(ii))), vectorise(speed_bin(1:end-1)));
   end
 
   %% Package Output
@@ -179,7 +179,6 @@ end % function
 function s = shiftSignal(x, shift)
   % shifts a signal a number of steps
   s = zeros(size(x));
-  assert(isscalar())
   if shift > 0
    s(shift+1:end) = x(1:end-shift);
   elseif shift < 0
