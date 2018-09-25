@@ -172,6 +172,7 @@ function [stats] = fit(self, data, verbose)
   stats.speed_bin = speed_bin;
   stats.R       = R;
   stats.R_shifted = R_shifted;
+  stats.R_percentile = inverse_percentile(R_shifted, R);
 
 end % function
 
@@ -186,4 +187,18 @@ function s = shiftSignal(x, shift)
   else
     s = x;
   end
+end % function
+
+function perc = inverse_percentile(data,value)
+    data_sorted = sort(data - min(data));
+    [~,index] = min(abs(data_sorted-(value-min(data))));
+    if index > 1 && index < length(data)
+        perc_1 = length(data(1:index-1))/length(data);
+        perc_2 = length(data(1:index))/length(data);
+        perc = (perc_1 + perc_2)/2;
+    elseif index == 1
+        perc = 0;
+    elseif index == length(data)
+        perc = 1;
+    end
 end % function
