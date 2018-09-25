@@ -143,7 +143,7 @@ function [stats] = fit(self, data, verbose)
   % lower values mean better inferential power
   % linear model is aic(:, 1), saturating exponential model is aic(:, 2)
   [aic, bic]    = aicbic([linear.LogLikelihood, satexp.LogLikelihood], [2, 3], length(speed_bin(1:end-1)));
-  
+
   % perform time-shifted r-squared computation
   R             = corr(vectorise(frequency), vectorise(speed_bin(1:end-1)));
   shifts        = 1:(30/self.Fs); % 30 s
