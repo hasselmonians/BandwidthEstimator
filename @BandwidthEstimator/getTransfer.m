@@ -1,4 +1,4 @@
-function getTransfer(self, signal, kmax, verbose, parallel)
+function [txy, f] = getTransfer(self, signal, kmax, verbose, parallel)
 
   % computes the transfer function between the spike train and a signal
   % Arguments:
@@ -29,3 +29,5 @@ function getTransfer(self, signal, kmax, verbose, parallel)
   % compute the transfer function using Welch's method
   % [txy,f] = tfestimate(x,y,window,noverlap,f,fs)
   [txy, f] = tfestimate(signal, best.spikeTrain, kmax, [], [], best.Fs);
+
+end % function
