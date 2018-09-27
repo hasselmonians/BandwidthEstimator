@@ -26,7 +26,9 @@ function [A, f, txy] = getTransfer(self, signal, kmax, verbose, parallel)
   % compute the MLE/CV bandwidth parameter for a hanning filter
   if ~isempty(kmax)
     % if kmax was passed as an argument, use that value instead
-    if verbose, disp('[INFO] computing kmax') end
+    if verbose
+      disp('[INFO] computing kmax')
+    end
     best.kernel = 'hanning';
     [~, kmax]   = best.cvKernel(parallel);
   end
