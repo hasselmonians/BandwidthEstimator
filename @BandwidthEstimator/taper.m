@@ -43,6 +43,6 @@ function D = taper(signal, ratio)
 
   % scale the end of the signal
   start = length(D) - hN + 1;
-  D(start:end) = D(start:end) .* welch(hN+2:end)';
+  D(start:end) = signal(start:end) .* welch(hN+2:end)';
 
 end % function
