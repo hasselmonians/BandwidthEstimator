@@ -1,21 +1,26 @@
-function [txy, f] = getTransfer(self, signal, kmax, verbose, parallel)
+function [A, f, txy] = getTransfer(self, signal, kmax, verbose, parallel)
 
   % computes the transfer function between the spike train and a signal
   % Arguments:
     % signal: an n x 1 vector that describes the animal speed (or similar)
     % verbose: a logical flag that describes whether extra info should be printed
     % parallel: a logical flag that describes whether the computation should be parallelized
+  % Outputs:
+    % A: the magnitude of the transfer function
+      % A = mag2db(abs(txy))
+    % txy: the transfer function in frequency-space
+    % f: the frequencies in Hz
 
   if nargin < 3
-    kmax = [];
+    kmax        = [];
   end
 
   if nargin < 4
-    verbose = false;
+    verbose     = false;
   end
 
   if nargin < 5
-    parallel = false;
+    parallel    = false;
   end
 
   % compute the MLE/CV bandwidth parameter for a hanning filter
@@ -23,11 +28,12 @@ function [txy, f] = getTransfer(self, signal, kmax, verbose, parallel)
     % if kmax was passed as an argument, use that value instead
     if verbose, disp('[INFO] computing kmax') end
     best.kernel = 'hanning';
-    [~, kmax] = best.cvKernel(parallel);
+    [~, kmax]   = best.cvKernel(parallel);
   end
 
   % compute the transfer function using Welch's method
   % [txy,f] = tfestimate(x,y,window,noverlap,f,fs)
-  [txy, f] = tfestimate(signal, best.spikeTrain, kmax, [], [], best.Fs);
+  [txy, f]      = tfestimate(signal, best.spikeTrain, kmax, [], [], best.Fs);
+  A             = mag2db(abs(txy));
 
 end % function
