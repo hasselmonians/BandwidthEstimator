@@ -30,12 +30,12 @@ function [A, f, txy] = getTransfer(self, signal, kmax, verbose, parallel)
       disp('[INFO] computing kmax')
     end
     best.kernel = 'hanning';
-    [~, kmax]   = self.cvKernel(parallel);
+    [~, kmax]   = best.cvKernel(parallel);
   end
 
   % compute the transfer function using Welch's method
   % [txy,f] = tfestimate(x,y,window,noverlap,f,fs)
-  [txy, f]      = tfestimate(signal, self.spikeTrain, kmax, [], [], self.Fs);
+  [txy, f]      = tfestimate(signal, self.spikeTrain, kmax, [], [], best.Fs);
   A             = mag2db(abs(txy));
 
 end % function
