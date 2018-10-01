@@ -41,10 +41,6 @@ function [estimate, kmax, loglikelihoods, bandwidths, CI] = cvKernel(self)
       return;
   end
 
-  if nargin < 2
-    parallel = false;
-  end
-
   %Make sure spikeTrain isn't logical
   if ~isa(spikeTrain,'double')
       spikeTrain=double(spikeTrain);
