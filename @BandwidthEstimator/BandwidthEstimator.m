@@ -28,6 +28,7 @@ methods
     self.Fs           = Fs;
     self.range        = range;
     self.kernel       = kernel;
+    self.parallel     = false;
   end
 
   % set the range to 3 : 2 : (value / best.Fs), where value is in seconds
@@ -55,6 +56,21 @@ methods
       self.kernel   = str2func(['BandwidthEstimator.' value]);
     else
       self.kernel   = value;
+    end
+
+  end % function
+
+  function self = set.parallel(self)
+
+    % flag that determines if computations should be done in parallel
+    % if there isn't a parallel pool set up, set one up
+
+    try
+      p = parpool;
+      self.parallel = true;
+    catch
+      % assume that a parallel pool is set up already
+      self.parallel = true;
     end
 
   end % function
