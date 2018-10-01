@@ -73,6 +73,8 @@ methods
         % assume that a parallel pool is set up already
         self.parallel = true;
       end % try/catch
+    else
+      self.parallel = false;
     end % if flag
 
   end % function
