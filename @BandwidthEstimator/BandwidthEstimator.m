@@ -8,6 +8,7 @@ properties
   Fs          % the sample frequency in Hz
   timestamps  % the time steps in s
   kernel      % the type of kernel to be used
+  parallel    % whether to automatically parallelize computations
 
 end % properties
 
@@ -27,7 +28,8 @@ methods
     self.Fs           = Fs;
     self.range        = range;
     self.kernel       = kernel;
-  end
+    self.parallel     = false;
+  end % function
 
   % set the range to 3 : 2 : (value / best.Fs), where value is in seconds
   function self = set.range(self, value)
