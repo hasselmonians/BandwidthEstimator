@@ -9,12 +9,12 @@ function [loglikelihoods, logcorrelation] = kernelCore(self, bandwidths, signal)
 
   % Allocate mean square error
   loglikelihoods=zeros(1,length(bandwidths));
-  if exist(signal)
-    logcorrelation=zeros(1,length(bandwidths));
-  end
+  logcorrelation=zeros(1,length(bandwidths));
+
+  dt = 1 / self.Fs;
 
   %Loop through kernel sizes, do a leave one out filter, and find loglikelihoods
-  if exist(signal)
+  if nargin > 2
     if self.parallel
       parfor wn=1:length(bandwidths)
           %Set window size
@@ -24,7 +24,7 @@ function [loglikelihoods, logcorrelation] = kernelCore(self, bandwidths, signal)
           w=bandwidths(wn);
 
           % set center point to zero for leave one out filter
-          k       = vectorise(kernel(w))';
+          k       = vectorise(self.kernel(w))';
           mid     = (w-1)/2+1;
           k(mid)  = 0;
           % normalize the notch kernel
@@ -52,7 +52,7 @@ function [loglikelihoods, logcorrelation] = kernelCore(self, bandwidths, signal)
           w=bandwidths(wn);
 
           % set center point to zero for leave one out filter
-          k       = vectorise(kernel(w));
+          k       = vectorise(self.kernel(w));
           mid     = (w-1)/2+1;
           k(mid)  = 0;
           % normalize the notch kernel
@@ -83,7 +83,7 @@ function [loglikelihoods, logcorrelation] = kernelCore(self, bandwidths, signal)
           w=bandwidths(wn);
 
           % set center point to zero for leave one out filter
-          k       = vectorise(kernel(w))';
+          k       = vectorise(self.kernel(w))';
           mid     = (w-1)/2+1;
           k(mid)  = 0;
           % normalize the notch kernel
@@ -107,7 +107,7 @@ function [loglikelihoods, logcorrelation] = kernelCore(self, bandwidths, signal)
           w=bandwidths(wn);
 
           % set center point to zero for leave one out filter
-          k       = vectorise(kernel(w));
+          k       = vectorise(self.kernel(w));
           mid     = (w-1)/2+1;
           k(mid)  = 0;
           % normalize the notch kernel
