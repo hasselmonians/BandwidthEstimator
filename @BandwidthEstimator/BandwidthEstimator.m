@@ -60,18 +60,20 @@ methods
 
   end % function
 
-  function self = set.parallel(self)
+  function self = set.parallel(self, flag)
 
     % flag that determines if computations should be done in parallel
     % if there isn't a parallel pool set up, set one up
 
-    try
-      p = parpool;
-      self.parallel = true;
-    catch
-      % assume that a parallel pool is set up already
-      self.parallel = true;
-    end
+    if flag
+      try
+        p = parpool;
+        self.parallel = true;
+      catch
+        % assume that a parallel pool is set up already
+        self.parallel = true;
+      end % try/catch
+    end % if flag
 
   end % function
 
