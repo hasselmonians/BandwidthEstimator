@@ -37,7 +37,7 @@ function [loglikelihoods, logcorrelation] = kernelCore(self, bandwidths, signal)
           l1o(~l1o)=1e-5;
 
           %Calculate the likelihood
-          loglikelihoods(wn)=sum(-l1o*dt+self.spikeTrain.*log(l1o)+self.spikeTrain*log(dt)-log(factorial(self.spikeTrain)));
+          loglikelihoods(wn)=sum(-l1o'*dt+self.spikeTrain.*log(l1o')+self.spikeTrain*log(dt)-log(factorial(self.spikeTrain)));
 
           % calculate the cross-correlation
           logcorrelation(wn) = log(max(xcorr(zscore(signal), zscore(self.spikeTrain))));
@@ -65,7 +65,7 @@ function [loglikelihoods, logcorrelation] = kernelCore(self, bandwidths, signal)
           l1o(~l1o)=1e-5;
 
           %Calculate the likelihood
-          loglikelihoods(wn)=sum(-l1o*dt+self.spikeTrain.*log(l1o)+self.spikeTrain*log(dt)-log(factorial(self.spikeTrain)));
+          loglikelihoods(wn)=sum(-l1o'*dt+self.spikeTrain.*log(l1o')+self.spikeTrain*log(dt)-log(factorial(self.spikeTrain)));
 
           % calculate the cross-correlation
           logcorrelation(wn) = log(max(xcorr(zscore(signal), zscore(self.spikeTrain))));
@@ -96,7 +96,7 @@ function [loglikelihoods, logcorrelation] = kernelCore(self, bandwidths, signal)
           l1o(~l1o)=1e-5;
 
           %Calculate the likelihood
-          loglikelihoods(wn)=sum(-l1o*dt+self.spikeTrain.*log(l1o)+self.spikeTrain*log(dt)-log(factorial(self.spikeTrain)));
+          loglikelihoods(wn)=sum(-l1o'*dt+self.spikeTrain.*log(l1o')+self.spikeTrain*log(dt)-log(factorial(self.spikeTrain)));
       end % wn
     else
       for wn=1:length(bandwidths)
@@ -118,9 +118,9 @@ function [loglikelihoods, logcorrelation] = kernelCore(self, bandwidths, signal)
 
           %Fix log(0) problem
           l1o(~l1o)=1e-5;
-
+          keyboard
           %Calculate the likelihood
-          loglikelihoods(wn)=sum(-l1o*dt+self.spikeTrain.*log(l1o)+self.spikeTrain*log(dt)-log(factorial(self.spikeTrain)));
+          loglikelihoods(wn)=sum(-l1o'*dt+self.spikeTrain.*log(l1o')+self.spikeTrain*log(dt)-log(factorial(self.spikeTrain)));
 
           textbar(wn, length(bandwidths))
       end % wn
