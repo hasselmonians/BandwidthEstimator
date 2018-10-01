@@ -23,7 +23,7 @@ function batchFunction(filename, cellnum, outfile, test)
   best.range  = 3:2:(60*best.Fs);
   best.kernel = 'hanning';
   % perform bandwidth parameter estimate with MLE/CV
-  [~, kmax, ~, ~, CI] = best.cvKernel(true);
+  [~, kmax, ~, ~, CI] = best.cvKernel();
 
   % save the data
   csvwrite(outfile, [kmax CI]);
