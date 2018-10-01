@@ -29,7 +29,7 @@ methods
     self.range        = range;
     self.kernel       = kernel;
     self.parallel     = false;
-  end
+  end % function
 
   % set the range to 3 : 2 : (value / best.Fs), where value is in seconds
   function self = set.range(self, value)

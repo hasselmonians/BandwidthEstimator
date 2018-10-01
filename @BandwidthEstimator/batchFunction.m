@@ -20,6 +20,7 @@ function batchFunction(filename, cellnum, outfile, test)
 
   % generate the Bandwidth Estimator
   best        = BandwidthEstimator(root);
+  best.parallel = true;
   best.range  = 3:2:(60*best.Fs);
   best.kernel = 'hanning';
   % perform bandwidth parameter estimate with MLE/CV
