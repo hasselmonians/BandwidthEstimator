@@ -118,7 +118,7 @@ function [loglikelihoods, logcorrelation] = kernelCore(self, bandwidths, signal)
 
           %Fix log(0) problem
           l1o(~l1o)=1e-5;
-          keyboard
+          
           %Calculate the likelihood
           loglikelihoods(wn)=sum(-l1o'*dt+self.spikeTrain.*log(l1o')+self.spikeTrain*log(dt)-log(factorial(self.spikeTrain)));
 
