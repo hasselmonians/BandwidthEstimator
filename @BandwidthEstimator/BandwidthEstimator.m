@@ -8,6 +8,7 @@ properties
   Fs          % the sample frequency in Hz
   timestamps  % the time steps in s
   kernel      % the type of kernel to be used
+  parallel    % whether to automatically parallelize computations
 
 end % properties
 

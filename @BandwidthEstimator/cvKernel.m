@@ -24,7 +24,7 @@
 %       Run "cvexample.m" for an example of the cross-validated kernel
 %       smoother used on spiking data.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function [estimate, kmax, loglikelihoods, bandwidths, CI] = cvKernel(self, parallel)
+function [estimate, kmax, loglikelihoods, bandwidths, CI] = cvKernel(self)
 
   range       = self.range;
   spikeTrain  = self.spikeTrain;
@@ -69,73 +69,20 @@ function [estimate, kmax, loglikelihoods, bandwidths, CI] = cvKernel(self, paral
     bandwidths=range;
   end
 
-  %Allocate mean square error
-  loglikelihoods=zeros(1,length(bandwidths));
+  % perform the computation
+  loglikelihoods = self.kernelCore(bandwidths);
 
-  %Loop through kernel sizes, do a leave one out filter, and find loglikelihoods
-  if parallel
-    parfor wn=1:length(bandwidths)
-        %Set window size
-        if ~mod(bandwidths(wn),2)
-            bandwidths(wn)=bandwidths(wn)+1;
-        end
-        w=bandwidths(wn);
-
-        % set center point to zero for leave one out filter
-        k       = vectorise(kernel(w))';
-        mid     = (w-1)/2+1;
-        k(mid)  = 0;
-        % normalize the notch kernel
-        k       = k/sum(k);
-
-        %Perform leave one out convolution
-        l1o = self.kconv(k);
-
-        %Fix log(0) problem
-        l1o(~l1o)=1e-5;
-
-        %Calculate the likelihood
-        loglikelihoods(wn)=sum(-l1o*dt+spikeTrain.*log(l1o)+spikeTrain*log(dt)-log(factorial(spikeTrain)));
-    end % wn
-  else
-    for wn=1:length(bandwidths)
-        %Set window size
-        if ~mod(bandwidths(wn),2)
-            bandwidths(wn)=bandwidths(wn)+1;
-        end
-        w=bandwidths(wn);
-
-        % set center point to zero for leave one out filter
-        k       = vectorise(kernel(w));
-        mid     = (w-1)/2+1;
-        k(mid)  = 0;
-        % normalize the notch kernel
-        k       = k/sum(k);
-
-        %Perform leave one out convolution
-        l1o = self.kconv(k);
-
-        %Fix log(0) problem
-        l1o(~l1o)=1e-5;
-
-        %Calculate the likelihood
-        loglikelihoods(wn)=sum(-l1o*dt+spikeTrain.*log(l1o)+spikeTrain*log(dt)-log(factorial(spikeTrain)));
-
-        textbar(wn, length(bandwidths))
-    end % wn
-  end % parallel
-
-  %Calculate the maximum likelihood bandwidth
+  % Calculate the maximum likelihood bandwidth
   [~, ki]=max(loglikelihoods);
   kmax=bandwidths(ki);
 
-  %Fix last bandwidth
+  % Fix last bandwidth
   if (ki==length(loglikelihoods)) || (ki==1)
       ki=length(loglikelihoods)-1;
       kmax=bandwidths(end);
   end
 
-  %Calculate confidence bounds using Fisher information
+  % Calculate confidence bounds using Fisher information
   a=loglikelihoods(ki-1);
   b=loglikelihoods(ki);
   c=loglikelihoods(ki+1);
