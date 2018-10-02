@@ -19,12 +19,14 @@
 %           at each iteration of the cross-validation
 %       CI is a 1x2 vector of estimated 95% confidence bounds from the Fisher
 %           information on the bandwidth size
+        % kcorr is the bandwidth with the maximum Pearson's R correlation
+        % correlation is the correlation over all bandwidths
 %
 %   EXAMPLE:
 %       Run "cvexample.m" for an example of the cross-validated kernel
 %       smoother used on spiking data.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function [estimate, kmax, loglikelihoods, bandwidths, CI] = cvKernel(self)
+function [estimate, kmax, loglikelihoods, bandwidths, CI, kcorr, correlation] = cvKernel(self, speed)
 
   range       = self.range;
   spikeTrain  = self.spikeTrain;
@@ -38,6 +40,8 @@ function [estimate, kmax, loglikelihoods, bandwidths, CI] = cvKernel(self)
       loglikelihoods=[];
       bandwidths=[];
       CI=[];
+      kcorr = [];
+      correlation = [];
       return;
   end
 
@@ -66,11 +70,24 @@ function [estimate, kmax, loglikelihoods, bandwidths, CI] = cvKernel(self)
   end
 
   % perform the computation
-  loglikelihoods = self.kernelCore(bandwidths);
+  if nargin > 1
+    [loglikelihoods, correlation] = self.kernelCore(bandwidths, speed);
+  else
+    logLikelihood = self.kernelCore(bandwidths);
+  end
 
   % Calculate the maximum likelihood bandwidth
   [~, ki]=max(loglikelihoods);
   kmax=bandwidths(ki);
+
+  % calculate the maximum correlation bandwidth
+  if nargin > 1
+    [~, kc] = max(correlation);
+    kcorr = bandwidths(kc);
+  else
+    correlation = [];
+    kcorr = [];
+  end
 
   % Fix last bandwidth
   if (ki==length(loglikelihoods)) || (ki==1)
@@ -89,7 +106,7 @@ function [estimate, kmax, loglikelihoods, bandwidths, CI] = cvKernel(self)
 
   %Calculate the full convolution with the best kernel
   if kmax<length(loglikelihoods)
-      k=hanning(kmax)/sum(hanning(kmax));
+      k=self.kernel(kmax)/sum(self.kernel(kmax));
       estimate = self.kconv(k);
   else
       estimate=ones(1,length(spikeTrain))*(sum(spikeTrain)/(dt*length(spikeTrain)));
