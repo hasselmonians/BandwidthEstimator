@@ -40,7 +40,7 @@ function [loglikelihoods, correlation] = kernelCore(self, bandwidths, signal)
           loglikelihoods(wn)=sum(-l1o'*dt+self.spikeTrain.*log(l1o')+self.spikeTrain*log(dt)-log(factorial(self.spikeTrain)));
 
           % calculate the cross-correlation
-          correlation(wn) = log(max(xcorr(zscore(signal), zscore(self.spikeTrain))));
+          correlation(wn) = corr(zscore(signal), zscore(self.spikeTrain));
 
       end % wn
     else
@@ -68,7 +68,7 @@ function [loglikelihoods, correlation] = kernelCore(self, bandwidths, signal)
           loglikelihoods(wn)=sum(-l1o'*dt+self.spikeTrain.*log(l1o')+self.spikeTrain*log(dt)-log(factorial(self.spikeTrain)));
 
           % calculate the cross-correlation
-          correlation(wn) = corr(zscore(signal), zscore(self.spikeTrain))));
+          correlation(wn) = corr(zscore(signal), zscore(self.spikeTrain));
           textbar(wn, length(bandwidths))
       end % wn
     end % parallel
