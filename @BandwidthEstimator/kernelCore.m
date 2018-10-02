@@ -1,4 +1,4 @@
-function [loglikelihoods, logcorrelation] = kernelCore(self, bandwidths, signal)
+function [loglikelihoods, correlation] = kernelCore(self, bandwidths, signal)
 
   % performs the core computation in the MLE/CV algorithm for determining an ideal bandwidth parameter
   % for kernel smoothing a spike train, developed by Prerau & Eden 2011.
@@ -9,7 +9,7 @@ function [loglikelihoods, logcorrelation] = kernelCore(self, bandwidths, signal)
 
   % Allocate mean square error
   loglikelihoods=zeros(1,length(bandwidths));
-  logcorrelation=zeros(1,length(bandwidths));
+  correlation=zeros(1,length(bandwidths));
 
   dt = 1 / self.Fs;
 
@@ -40,7 +40,7 @@ function [loglikelihoods, logcorrelation] = kernelCore(self, bandwidths, signal)
           loglikelihoods(wn)=sum(-l1o'*dt+self.spikeTrain.*log(l1o')+self.spikeTrain*log(dt)-log(factorial(self.spikeTrain)));
 
           % calculate the cross-correlation
-          logcorrelation(wn) = log(max(xcorr(zscore(signal), zscore(self.spikeTrain))));
+          correlation(wn) = log(max(xcorr(zscore(signal), zscore(self.spikeTrain))));
 
       end % wn
     else
@@ -68,8 +68,7 @@ function [loglikelihoods, logcorrelation] = kernelCore(self, bandwidths, signal)
           loglikelihoods(wn)=sum(-l1o'*dt+self.spikeTrain.*log(l1o')+self.spikeTrain*log(dt)-log(factorial(self.spikeTrain)));
 
           % calculate the cross-correlation
-          logcorrelation(wn) = log(max(xcorr(zscore(signal), zscore(self.spikeTrain))));
-
+          correlation(wn) = corr(zscore(signal), zscore(self.spikeTrain))));
           textbar(wn, length(bandwidths))
       end % wn
     end % parallel
@@ -118,7 +117,7 @@ function [loglikelihoods, logcorrelation] = kernelCore(self, bandwidths, signal)
 
           %Fix log(0) problem
           l1o(~l1o)=1e-5;
-          
+
           %Calculate the likelihood
           loglikelihoods(wn)=sum(-l1o'*dt+self.spikeTrain.*log(l1o')+self.spikeTrain*log(dt)-log(factorial(self.spikeTrain)));
 
