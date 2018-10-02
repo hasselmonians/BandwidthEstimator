@@ -17,6 +17,8 @@ function batchFunction(filename, cellnum, outfile, test)
   % acquire data using function arguments
   load(filename);
   root.cel = cellnum;
+  root.AppendKalmanVel;
+  speed = root.svel;
 
   % generate the Bandwidth Estimator
   best        = BandwidthEstimator(root);
@@ -24,9 +26,9 @@ function batchFunction(filename, cellnum, outfile, test)
   best.range  = 3:2:(60*best.Fs);
   best.kernel = 'hanning';
   % perform bandwidth parameter estimate with MLE/CV
-  [~, kmax, ~, ~, CI] = best.cvKernel;
+  [~, kmax, ~, ~, CI, kcorr, ~] = best.cvKernel(speed);
 
   % save the data
-  csvwrite(outfile, [kmax CI]);
+  csvwrite(outfile, [kmax CI kcorr]);
 
 end % function
