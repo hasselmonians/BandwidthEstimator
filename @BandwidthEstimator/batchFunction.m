@@ -17,7 +17,7 @@ function batchFunction(filename, cellnum, outfile, test)
   % acquire data using function arguments
   load(filename);
   root.cel = cellnum;
-  root.AppendKalmanVel;
+  root = root.AppendKalmanVel;
   speed = root.svel;
 
   % generate the Bandwidth Estimator
