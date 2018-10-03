@@ -24,7 +24,7 @@ function batchFunction(filename, cellnum, outfile, test)
   best        = BandwidthEstimator(root);
   best.parallel = true;
   best.range  = 3:2:(60*best.Fs);
-  best.kernel = 'hanning';
+  best.kernel = 'alpha';
   % perform bandwidth parameter estimate with MLE/CV
   [~, kmax, ~, ~, CI, kcorr, ~] = best.cvKernel(speed);
 
