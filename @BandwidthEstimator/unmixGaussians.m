@@ -1,4 +1,4 @@
-function gmm = unmixGaussians(data, k, N, reg)
+function gmm = unmix(data, k, N, reg)
     % fit a gaussian mixed model to data
     % this is essentially a wrapper for gmdistribution.cluster()
     % Input:
