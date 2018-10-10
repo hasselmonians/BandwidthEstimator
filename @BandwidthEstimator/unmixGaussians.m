@@ -1,23 +1,23 @@
-function gmm = unmixGaussians(varargin{:})
+function gmm = unmixGaussians(data, k, N, reg)
     % fit a gaussian mixed model to data
     % this is essentially a wrapper for gmdistribution.cluster()
     % Input:
       % data: a vector of data to be unmixed
       % k: the number of gaussians to fit, defaults to 2
-      % Regularization: a small scalar used to regularize the covariance matrix
-      % TrialNumber: the number of models to produce, taking the best one, by log-likelihood
+      % reg: a small scalar used to regularize the covariance matrix
+      % N: the number of models to produce, taking the best one, by log-likelihood
 
-    p = inputParser;
-    p.addRequired('data', @(x) isvector(x));
-    p.addParameter('k', 2, @(x) isscalar(x) && x > 0);
-    p.addParameter('Regularization', 0, @(x) isscalar(x) && x > 0);
-    p.addParameter('TrialNumber', 100), @(x) isscalar(x) && x > 0;
-    p.parse();
+    if nargin < 4
+        reg = 0;
+    end
 
-    data    = p.Results.data;
-    k       = p.Results.k;
-    reg     = p.Results.Regularization;
-    N       = p.Results.TrialNumber;
+    if nargin < 3
+        N = 100;
+    end
+
+    if nargin < 2
+        k = 2;
+    end
 
     % fit a gaussian mixed model to the data
     gmm     = fitgmdist(data, k, 'Regularization', reg);
