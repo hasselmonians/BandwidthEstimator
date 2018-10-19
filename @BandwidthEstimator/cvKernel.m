@@ -73,7 +73,7 @@ function [estimate, kmax, loglikelihoods, bandwidths, CI, kcorr, correlation] = 
   if nargin > 1
     [loglikelihoods, correlation] = self.kernelCore(bandwidths, speed);
   else
-    logLikelihood = self.kernelCore(bandwidths);
+    loglikelihoods = self.kernelCore(bandwidths);
   end
 
   % Calculate the maximum likelihood bandwidth
