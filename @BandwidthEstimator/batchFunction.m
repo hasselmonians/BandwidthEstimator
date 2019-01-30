@@ -1,4 +1,4 @@
-function batchFunction(filename, cellnum, outfile, test)
+function batchFunction(index, location, outfile, test)
 
   if nargin < 4
     test = false;
@@ -14,11 +14,17 @@ function batchFunction(filename, cellnum, outfile, test)
     import CMBHOME.*
   end
 
+  % acquire the filename and cell number
+  fileID      = fopen([location filesep 'filenames.txt'], 'r');
+  filename    = cell2char(textscan(fileID, '%[^\n]', index));
+  fclose(fileID);
+  cellnum     = csvread([location filesep 'cellnums.csv'], index-1, 0, [index-1, 0, index-1, 1]);
+
   % acquire data using function arguments
   load(filename);
-  root.cel = cellnum;
-  root = root.AppendKalmanVel;
-  speed = root.svel;
+  root.cel    = cellnum;
+  root        = root.AppendKalmanVel;
+  speed       = root.svel;
 
   % generate the Bandwidth Estimator
   best        = BandwidthEstimator(root);
