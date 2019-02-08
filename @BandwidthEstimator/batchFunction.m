@@ -46,10 +46,6 @@ function batchFunction(index, location, outfile, test)
 
   %% Save the data
 
-  if index == 1
-    csvwrite(outfile, [kmax, CI, kcorr]);
-  else
-    dlmwrite(outfile, [kmax CI kcorr], 'delimiter', ',', '-append');
-  end
+  csvwrite(outfile, [kmax, CI, kcorr]);
 
 end % function
