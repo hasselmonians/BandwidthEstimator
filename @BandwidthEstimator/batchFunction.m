@@ -39,7 +39,7 @@ function batchFunction(index, location, outfile, test)
   best        = BandwidthEstimator(root);
   best.parallel = true; % see if this works on cluster ...
   best.range  = 3:2:(60*best.Fs);
-  best.kernel = 'alpha';
+  best.kernel = 'hanning';
 
   % perform bandwidth parameter estimate with MLE/CV
   [~, kmax, ~, ~, CI, kcorr, ~] = best.cvKernel(speed);
