@@ -94,7 +94,7 @@ methods (Static)
   w            = hanning(n)
   D            = taper(signal, ratio)
   [yvar, xvar] = histogram2(x,y,edges)
-  gmm          = unmix(data, k, N, reg)
+  gmm          = unmixGaussians(data, k, N, reg)
 
 end % static methods
 
