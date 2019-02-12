@@ -37,7 +37,7 @@ function batchFunction(index, location, outfile, test)
   %% Generate the Bandwidth Estimator
 
   best        = BandwidthEstimator(root);
-  best.parallel = true; % see if this works on cluster ...
+  best.parallel = false;
   best.range  = 3:2:(60*best.Fs);
   best.kernel = 'hanning';
 
