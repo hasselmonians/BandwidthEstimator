@@ -63,9 +63,11 @@ methods
   function self = set.parallel(self, value)
 
     % if parallel is true, try to start a parallel pool
-    % if paralle is false, try to shut down parallel pool
+    % if parallel is false, try to shut down parallel pool
 
-    if value == true & ~gcp('nocreate')
+    p = gcp('nocreate');
+
+    if value == true & isempty(p)
       try
         parpool
         self.parallel = true;
@@ -79,6 +81,8 @@ methods
       catch
         disp('[ERROR] could not terminate parallel pool')
       end
+    else
+      disp('[ERROR] parallel should be true or false')
     end
 
   end % function
