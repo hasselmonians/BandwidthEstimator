@@ -18,13 +18,7 @@ function batchFunction(index, batchname, location, outfile, test)
 
   %% Read data
 
-  % load the entire filename file
-  % this is slow, but MATLAB has clunky textread options
-  filename    = lineRead([location filesep 'filenames-' batchname '.txt']);
-  % acquire only the character vector corresponding to the indexed filename
-  filename    = filename{index};
-  % acquire the cell number using similarly clunky indexing
-  cellnum     = csvread([location filesep 'cellnums-' batchname '.csv'], index-1, 0, [index-1, 0, index-1, 1]);
+  [filename, cellnum] = RatCatcher.read(location, batchname, index);
 
   %% Load data
 
