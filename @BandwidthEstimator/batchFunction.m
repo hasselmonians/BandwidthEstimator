@@ -1,4 +1,4 @@
-function batchFunction(index, location, outfile, test)
+function batchFunction(index, batchname, location, outfile, test)
 
   %% Preamble
 
@@ -20,11 +20,11 @@ function batchFunction(index, location, outfile, test)
 
   % load the entire filename file
   % this is slow, but MATLAB has clunky textread options
-  filename    = lineRead([location filesep 'filenames.txt']);
+  filename    = lineRead([location filesep 'filenames-' batchname '.txt']);
   % acquire only the character vector corresponding to the indexed filename
   filename    = filename{index};
   % acquire the cell number using similarly clunky indexing
-  cellnum     = csvread([location filesep 'cellnums.csv'], index-1, 0, [index-1, 0, index-1, 1]);
+  cellnum     = csvread([location filesep 'cellnums-' batchname '.csv'], index-1, 0, [index-1, 0, index-1, 1]);
 
   %% Load data
 
