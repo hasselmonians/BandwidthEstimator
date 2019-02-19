@@ -1,4 +1,4 @@
-function batchFunction(index, batchname, location, outfile, test)
+function batchFunction(index, location, batchname, outfile, test)
 
   %% Preamble
 
@@ -18,7 +18,7 @@ function batchFunction(index, batchname, location, outfile, test)
 
   %% Read data
 
-  [filename, cellnum] = RatCatcher.read(location, batchname, index);
+  [filename, cellnum] = RatCatcher.read(index, location, batchname);
 
   %% Load data
 
