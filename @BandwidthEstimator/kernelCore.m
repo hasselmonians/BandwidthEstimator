@@ -69,7 +69,7 @@ function [loglikelihoods, correlation] = kernelCore(self, bandwidths, signal)
 
           % calculate the cross-correlation
           correlation(wn) = corr(zscore(signal), zscore(l1o)');
-          textbar(wn, length(bandwidths))
+          corelib.textbar(wn, length(bandwidths))
       end % wn
     end % parallel
   else
@@ -121,7 +121,7 @@ function [loglikelihoods, correlation] = kernelCore(self, bandwidths, signal)
           %Calculate the likelihood
           loglikelihoods(wn)=sum(-l1o'*dt+self.spikeTrain.*log(l1o')+self.spikeTrain*log(dt)-log(factorial(self.spikeTrain)));
 
-          textbar(wn, length(bandwidths))
+          corelib.textbar(wn, length(bandwidths))
       end % wn
     end % parallel
   end % signal
