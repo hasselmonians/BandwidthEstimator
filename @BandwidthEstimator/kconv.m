@@ -27,9 +27,9 @@ function result=kconv(self, k)
 
   % if k is scalar, generate a vector that defines the window
   if isscalar(k)
-    k       = vectorise(kernel(k))'; % k becomes the vector that defines the window
+    k       = corelib.vectorise(kernel(k))'; % k becomes the vector that defines the window
   else
-    k       = vectorise(k)';
+    k       = corelib.vectorise(k)';
   end % otherwise, k is a vector, and will be used as the window
 
   % normalize k

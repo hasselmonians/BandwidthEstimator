@@ -53,7 +53,7 @@ function [stats] = fit(self, data, verbose)
 
   % only consider speed above 0 cm/sec and less than the 95% to avoid undersampled regions
   % we include the lower bound to incorporate saturating exponential models with
-  speed_bin     = vectorise(0:1:quantile(speed, 0.95))'; % cm/s
+  speed_bin     = corelib.vectorise(0:1:quantile(speed, 0.95))'; % cm/s
 
   % bin index into which that speed value fits
   % e.g. if speed(i) is in speed_bin(j) then speed_idx(i) = j
@@ -145,11 +145,11 @@ function [stats] = fit(self, data, verbose)
   [aic, bic]    = aicbic([linear.LogLikelihood, satexp.LogLikelihood], [2, 3], length(speed_bin(1:end-1)));
 
   % perform time-shifted r-squared computation
-  R             = corr(vectorise(frequency), vectorise(speed_bin(1:end-1)));
+  R             = corr(corelib.vectorise(frequency), corelib.vectorise(speed_bin(1:end-1)));
   shifts        = 1:round(30*self.Fs); % 30 s
   R_shifted     = NaN(length(shifts), 1);
   for ii = 1:length(shifts)
-    R_shifted(ii) = corr(vectorise(shiftSignal(frequency, shifts(ii))), vectorise(speed_bin(1:end-1)));
+    R_shifted(ii) = corr(corelib.vectorise(shiftSignal(frequency, shifts(ii))), corelib.vectorise(speed_bin(1:end-1)));
   end
 
   %% Package Output

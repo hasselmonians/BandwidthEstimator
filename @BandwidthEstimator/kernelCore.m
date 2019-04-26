@@ -24,7 +24,7 @@ function [loglikelihoods, correlation] = kernelCore(self, bandwidths, signal)
           w=bandwidths(wn);
 
           % set center point to zero for leave one out filter
-          k       = vectorise(self.kernel(w))';
+          k       = corelib.vectorise(self.kernel(w))';
           mid     = (w-1)/2+1;
           k(mid)  = 0;
           % normalize the notch kernel
@@ -52,7 +52,7 @@ function [loglikelihoods, correlation] = kernelCore(self, bandwidths, signal)
           w=bandwidths(wn);
 
           % set center point to zero for leave one out filter
-          k       = vectorise(self.kernel(w));
+          k       = corelib.vectorise(self.kernel(w));
           mid     = (w-1)/2+1;
           k(mid)  = 0;
           % normalize the notch kernel
@@ -82,7 +82,7 @@ function [loglikelihoods, correlation] = kernelCore(self, bandwidths, signal)
           w=bandwidths(wn);
 
           % set center point to zero for leave one out filter
-          k       = vectorise(self.kernel(w))';
+          k       = corelib.vectorise(self.kernel(w))';
           mid     = (w-1)/2+1;
           k(mid)  = 0;
           % normalize the notch kernel
@@ -106,7 +106,7 @@ function [loglikelihoods, correlation] = kernelCore(self, bandwidths, signal)
           w=bandwidths(wn);
 
           % set center point to zero for leave one out filter
-          k       = vectorise(self.kernel(w));
+          k       = corelib.vectorise(self.kernel(w));
           mid     = (w-1)/2+1;
           k(mid)  = 0;
           % normalize the notch kernel
