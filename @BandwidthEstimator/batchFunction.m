@@ -8,11 +8,11 @@ function batchFunction(index, location, batchname, outfile, test)
 
   % if test is false, do not add to the matlab path
   if ~test
-    addpath(genpath('/projectnb/hasselmogrp/hoyland/MLE-time-course/'))
-    addpath(genpath('/projectnb/hasselmogrp/hoyland/RatCatcher/'))
-    addpath(genpath('/projectnb/hasselmogrp/hoyland/BandwidthEstimator/'))
-    addpath(genpath('/projectnb/hasselmogrp/hoyland/srinivas.gs_mtools'))
-    addpath(genpath('/projectnb/hasselmogrp/hoyland/CMBHOME/'))
+    addpath(genpath('/projectnb/hasselmogrp/ahoyland/MLE-time-course/'))
+    addpath(genpath('/projectnb/hasselmogrp/ahoyland/RatCatcher/'))
+    addpath(genpath('/projectnb/hasselmogrp/ahoyland/BandwidthEstimator/'))
+    addpath(genpath('/projectnb/hasselmogrp/ahoyland/srinivas.gs_mtools'))
+    addpath(genpath('/projectnb/hasselmogrp/ahoyland/CMBHOME/'))
     import CMBHOME.*
   end
 

@@ -93,7 +93,7 @@ end % methods
 methods (Static)
 
   spikeTrain   = getSpikeTrain(spikeTimes, timestep)
-                 batchFunction(filename, cellnum, outfile, test)
+                 batchFunction(index, location, batchname, outfile, test)
   result       = alpha(k, tau)
   w            = hanning(n)
   D            = taper(signal, ratio)
