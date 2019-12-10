@@ -40,11 +40,11 @@ function batchFunction(index, location, batchname, outfile, test)
   % generate the options struct
   options = optimoptions('particleswarm', ...
             'Display', 'off', ...
-            'UseParallel', self.parallel);
+            'UseParallel', best.parallel);
 
   % generate the cost function
   bandwidth = 100; % s TODO: see if this is sufficient?
-  cost_fcn = @(params) self.exGaussian_cost_function(params, bandwidth);
+  cost_fcn = @(params) best.exGaussian_cost_function(params, bandwidth);
 
   % lower and upper bounds
   lb = 1e-5 * ones(3, 1); % NOTE: don't use 0 due to arithmetic errors
