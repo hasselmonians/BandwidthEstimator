@@ -2,9 +2,9 @@
 % using an Exponentially_modified_Gaussian_distribution kernel
 % with fixed bandwidth parameter and variable kernel parameters
 
-function objective = exGaussian_cost_function(self, params)
+function objective = exGaussian_cost_function(self, params, bandwidth)
 
-  w = 100 * self.Fs;
+  w = bandwidth * self.Fs;
 
   % create the kernel
   k = corelib.vectorise(exgaussian(w, params(1), params(2), params(3)))';
