@@ -1,6 +1,6 @@
 r             = RatCatcher;
-r.localpath   = '/mnt/hasselmogrp/hoyland/BandwidthEstimator/cluster';
-r.remotepath  = '/projectnb/hasselmogrp/hoyland/BandwidthEstimator/cluster';
+r.localpath   = '/mnt/hasselmogrp/ahoyland/BandwidthEstimator/cluster';
+r.remotepath  = '/projectnb/hasselmogrp/ahoyland/BandwidthEstimator/cluster';
 r.protocol    = 'ExGaussian';
 r.project     = 'hasselmogrp';
 r.expID       = {'Caitlin', 'A'; 'Caitlin', 'B'; 'Caitlin', 'C'; 'Caitlin', 'D'; 'Caitlin', 'E'};
