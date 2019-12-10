@@ -4,7 +4,7 @@
 
 function objective = exGaussian_cost_function(self, params, bandwidth)
 
-  w = bandwidth * self.Fs;
+  w = round(bandwidth * self.Fs);
 
   % create the kernel
   k = corelib.vectorise(ExGaussian.exgaussian(w, params(1), params(2), params(3)))';
