@@ -7,7 +7,7 @@ function objective = exGaussian_cost_function(self, params, bandwidth)
   w = bandwidth * self.Fs;
 
   % create the kernel
-  k = corelib.vectorise(exgaussian(w, params(1), params(2), params(3)))';
+  k = corelib.vectorise(ExGaussian.exgaussian(w, params(1), params(2), params(3)))';
 
   % set the first point to zero for leave-one-out filtering
   k(1) = 0;
