@@ -34,7 +34,7 @@ options = optimoptions('particleswarm', ...
 
 % generate the cost function
 bandwidth = 100; % s TODO: see if this is sufficient?
-cost_fcn = @(params) best.exGaussian_cost_function(params, 1:bandwidth+1);
+cost_fcn = @(params) best.exGaussian_cost_function(params, 1:bandwidth);
 
 % lower and upper bounds
 lb = 1e-5 * ones(3, 1); % NOTE: don't use 0 due to arithmetic errors
