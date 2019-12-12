@@ -33,8 +33,12 @@ options = optimoptions('particleswarm', ...
           'UseParallel', best.parallel);
 
 % generate the cost function
-bandwidth = 100; % s TODO: see if this is sufficient?
-cost_fcn = @(params) best.exGaussian_cost_function(params, 1:bandwidth);
+bandwidth = round(100 * best.Fs); % s TODO: see if this is sufficient?
+if rem(bandwidth, 2) == 0
+  bandwidth = bandwidth + 1;
+end
+
+cost_fcn = @(params) best.exGaussian_cost_function(params, 1:2:bandwidth);
 
 % lower and upper bounds
 lb = 1e-5 * ones(3, 1); % NOTE: don't use 0 due to arithmetic errors

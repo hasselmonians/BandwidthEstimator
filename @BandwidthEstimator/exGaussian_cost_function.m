@@ -2,9 +2,12 @@
 % using an Exponentially_modified_Gaussian_distribution kernel
 % with fixed bandwidth parameter and variable kernel parameters
 
-function objective = exGaussian_cost_function(self, params, bandwidth)
+%% Arguments:
+%   self: the BandwidthEstimator object
+%   params: a 3-vector of parameter values (mu, sigma, lambda)
+%   w: the bandwidth parameter; must be a positive, odd integer
 
-  w = round(bandwidth * self.Fs);
+function objective = exGaussian_cost_function(self, params, w)
 
   % create the kernel
   k = corelib.vectorise(ExGaussian.exgaussian(w, params(1), params(2), params(3)))';
@@ -13,14 +16,18 @@ function objective = exGaussian_cost_function(self, params, bandwidth)
   k(1) = 0;
 
   % normalize the notch kernel
-  k = k / sum(k);
+  k2 = k / sum(k);
 
   %% Perform leave-one-out convolution
 
-  firing_rate_estimate = self.kconv(k);
+  firing_rate_estimate = self.kconv(k2);
 
   % fix log(0) problem
-  firing_rate_estimate(~firing_rate_estimate) = 1e-5;
+  try
+    firing_rate_estimate(~firing_rate_estimate) = 1e-5;
+  catch
+    keyboard
+  end
 
   % calculate the log-likelihood of a Poisson-distributed point-process
   dt = 1 / self.Fs;
