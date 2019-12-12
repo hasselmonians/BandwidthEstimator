@@ -16,7 +16,7 @@ function L = loglikelihood(self, firing_rate_estimate)
 
   dt = 1 / self.Fs;
 
-  L = sum(-fr_estimate' * dt + self.spikeTrain .* log(fr_estimate') ...
+  L = sum(-firing_rate_estimate' * dt + self.spikeTrain .* log(firing_rate_estimate') ...
       + self.spikeTrain * log(dt) - log(factorial(self.spikeTrain)));
 
 end % function
