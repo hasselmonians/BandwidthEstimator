@@ -48,7 +48,7 @@ function batchFunction(index, location, batchname, outfile, test)
 
   % lower and upper bounds
   lb = 1e-5 * ones(3, 1); % NOTE: don't use 0 due to arithmetic errors
-  ub = 1e3 * ones(3, 1); % TODO: see if this is sufficient?
+  ub = 10 * ones(3, 1); % TODO: see if this is sufficient?
 
   % perform particle swarm optimization
   [params, fval, exitflag, output] = particleswarm(cost_fcn, 3, lb, ub, options);
