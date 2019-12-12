@@ -76,13 +76,13 @@ methods
       end
     elseif value == false
       try
-        delete(gcp('nocreate'))
+        % delete(gcp('nocreate'))
         self.parallel = false;
       catch
-        disp('[ERROR] could not terminate parallel pool')
+        % disp('[ERROR] could not terminate parallel pool')
       end
     else
-      disp('[ERROR] parallel should be true or false')
+      % disp('[ERROR] parallel should be true or false')
     end
 
   end % function
