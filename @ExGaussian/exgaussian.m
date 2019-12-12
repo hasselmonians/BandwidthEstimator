@@ -32,10 +32,10 @@ function [p, equation_used] = exgaussian(x, mu, sigma, lambda)
       % use the first formula
       equation_used = 1;
       p(ii) = sigma/tau * sqrt(pi/2) * exp(1/2 * (sigma/tau).^2 - (x(ii) - mu)/tau) .* erfc(z);
-    elseif z > 6.71e7
+    elseif z > 6.71e3
       % use the third formula
       equation_used = 3;
-      p(ii) = exp(-1/2 * ((x(ii) - mu)/sigma).^2) ./ (1 + (x(ii) - mu)*tau/sigma.^2);
+      p(ii) = exp(-1/2 * ((x(ii) - mu)/sigma) .^ 2) ./ (1 + (x(ii) - mu) * tau/sigma.^2);
     else
       % use the second formula
       equation_used = 2;
