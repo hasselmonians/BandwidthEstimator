@@ -10,7 +10,7 @@ end % methods
 
 methods (Static)
 
-  p = exgaussian(x, mu, sigma, lambda)
+  [p, equation_used] = exgaussian(x, mu, sigma, lambda)
   batchFunction(index, location, batchname, outfile, test)
 
 end % static methods
