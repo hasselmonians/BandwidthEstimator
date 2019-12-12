@@ -18,16 +18,19 @@ function objective = exGaussian_cost_function(self, params, w)
   % normalize the notch kernel
   k2 = k / sum(k);
 
+  % check to make sure that the kernel is valid
+  if any(isnan(k2))
+    corelib.verb(self.verbosity, 'BandwidthEstimator::exGaussian_cost_function', 'kernel is not valid')
+    objective = 0;
+    return
+  end
+
   %% Perform leave-one-out convolution
 
   firing_rate_estimate = self.kconv(k2);
 
   % fix log(0) problem
-  try
-    firing_rate_estimate(~firing_rate_estimate) = 1e-5;
-  catch
-    keyboard
-  end
+  firing_rate_estimate(~firing_rate_estimate) = 1e-5;
 
   % calculate the log-likelihood of a Poisson-distributed point-process
   dt = 1 / self.Fs;

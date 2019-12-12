@@ -9,6 +9,7 @@ properties
   timestamps  % the time steps in s
   kernel      % the type of kernel to be used
   parallel    % whether to automatically parallelize computations
+  verbosity   % whether to provide textual output
 
 end % properties
 
