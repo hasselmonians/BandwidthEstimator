@@ -24,20 +24,24 @@ function [p, equation_used] = exgaussian(x, mu, sigma, lambda)
   equation_used = 0;
 
   tau = 1 / lambda;
-  z = 1 / sqrt(2) * (sigma/tau - (x - mu)/sigma);
 
-  if z < 0
-    % use the first formula
-    equation_used = 1;
-    p = sigma/tau * sqrt(pi/2) * exp(1/2 * (sigma/tau).^2 - (x - mu)/tau) .* erfc(z);
-  elseif z > 6.71e7
-    % use the third formula
-    equation_used = 3;
-    p = exp(-1/2 * ((x - mu)/sigma).^2) ./ (1 + (x - mu)*tau/sigma.^2);
-  else
-    % use the second formula
-    equation_used = 2;
-    p = exp(-1/2 * ((x - mu)/sigma).^2) .* sigma / tau * sqrt(pi/2) .* exp(z.^2) .* erfc(z);
+  for ii = 1:length(x)
+    z = 1 / sqrt(2) * (sigma/tau - (x(ii) - mu)/sigma);
+
+    if z < 0
+      % use the first formula
+      equation_used = 1;
+      p(ii) = sigma/tau * sqrt(pi/2) * exp(1/2 * (sigma/tau).^2 - (x(ii) - mu)/tau) .* erfc(z);
+    elseif z > 6.71e7
+      % use the third formula
+      equation_used = 3;
+      p(ii) = exp(-1/2 * ((x(ii) - mu)/sigma).^2) ./ (1 + (x(ii) - mu)*tau/sigma.^2);
+    else
+      % use the second formula
+      equation_used = 2;
+      p(ii) = exp(-1/2 * ((x(ii) - mu)/sigma).^2) .* sigma / tau * sqrt(pi/2) .* exp(z.^2) .* erfc(z);
+    end
+
   end
 
   % assert(all(rem(x, 1) == 0), 'x must be comprised of integer values')
