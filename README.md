@@ -19,6 +19,7 @@ best = BandwidthEstimator(root)
 * `Fs` contains the sample rate of the video recording.
 * `range` contains the bandwidth parameters over which tests should be performed. These values should be odd integers only. The default is `3:2:(60 * Fs)`.
 * `kernel` holds a function handle to the kernel smoothing function used by the rest of this package. It can be set by pointing directly to a function handle (e.g. `best.kernel = @fcn`), or by a character vector describing a static method of `BandwidthEstimator` (e.g. `best.kernel = 'hanning'`). Currently, only the hanning and alpha kernels are defined in this way.
+* `verbosity` determines how much info text to print to the console.
 
 The core functionality of this package is in the `cvKernel` and `kconv` functions, written by Michael Prerau (c) 2011. These functions have been heavily modified from their original forms to be methods of the `BandwidthEstimator` class.
 
@@ -41,6 +42,9 @@ estimate = best.kconv(hanning(60*best.Fs));
 ```
 > Note that it is generally best practice for the argument to be in units of timesteps (and thus a positive, odd, integral, scalar), since there is little guarantee that `60*best.Fs` will return an odd integer.
 
-`cvExample` is a script that demonstrates the algorithm. I doubt it works right now.
+The `test` script will test the algorithm for you.
+It uses data from the Hasselmo Lab at Boston University.
+Naturally, you will need to change the paths if you want to use it directly,
+but it should serve as an adequate scaffolding for using this algorithm yourself.
 
 The `batchFunction` is used for generating batch scripts with [RatCatcher](https://github.com/hasselmonians/RatCatcher).
