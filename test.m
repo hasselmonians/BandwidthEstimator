@@ -1,7 +1,7 @@
 r             = RatCatcher;
 r.localpath   = '/mnt/hasselmogrp/ahoyland/BandwidthEstimator/cluster';
 r.remotepath  = '/projectnb/hasselmogrp/ahoyland/BandwidthEstimator/cluster';
-r.protocol    = 'ExGaussian';
+r.protocol    = 'BandwidthEstimator';
 r.project     = 'hasselmogrp';
 r.expID       = {'Caitlin', 'A'; 'Caitlin', 'B'; 'Caitlin', 'C'; 'Caitlin', 'D'; 'Caitlin', 'E'};
 r.verbose     = true;
@@ -11,42 +11,26 @@ location      = '/mnt/hasselmogrp/ahoyland/BandwidthEstimator/cluster/';
 batchname     = 'Caitlin-A-ExGaussian';
 outfile       = '~/code/BandwidthEstimator/test.csv';
 
+%% Read data
 [filename, cellnum] = RatCatcher.read(index, location, batchname);
 filename      = strrep(filename, 'projectnb', 'mnt');
 
+%% Load data
+
 % load the root object from the specified raw data file
 load(filename);
-root.cel = cellnum;
-root = root.AppendKalmanVel;
-speed = root.svel;
+root.cel    = cellnum;
+root        = root.AppendKalmanVel;
+speed       = root.svel;
 
 %% Generate the Bandwidth Estimator
 
-best = BandwidthEstimator(root);
-best.parallel = true;
+best        = BandwidthEstimator(root);
+best.parallel = false;
+best.range  = 3:2:(60*best.Fs);
+best.kernel = 'hanning';
 
-%% Perform particle swarm optimization
+% perform bandwidth parameter estimate with MLE/CV
+[~, kmax, ~, ~, CI, ~, ~] = best.cvKernel();
 
-% generate the options struct
-options = optimoptions('particleswarm', ...
-          'Display', 'off', ...
-          'UseParallel', best.parallel);
-
-% generate the cost function
-bandwidth = round(100 * best.Fs); % s TODO: see if this is sufficient?
-if rem(bandwidth, 2) == 0
-  bandwidth = bandwidth + 1;
-end
-
-cost_fcn = @(params) best.exGaussian_cost_function(params, 1:2:bandwidth);
-
-% lower and upper bounds
-lb = 1e-5 * ones(3, 1); % NOTE: don't use 0 due to arithmetic errors
-ub = bandwidth * best.Fs * ones(3, 1); % TODO: see if this is sufficient?
-
-% perform particle swarm optimization
-[params, fval, exitflag, output] = particleswarm(cost_fcn, 3, lb, ub, options);
-
-%% Save the parameter results
-
-writematrix([params(:), fval], outfile)
+writematrix([kmax, CI], outfile)
