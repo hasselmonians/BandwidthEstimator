@@ -42,7 +42,7 @@ function result=kconv(self, k)
   end
 
   %Perform the standard convolution
-  result=conv(data,k/dt,'same');
+  % result=conv(data,k/dt,'same');
 
   %Define the overlap size and window midpoint
   snip=(w-1)/2;
