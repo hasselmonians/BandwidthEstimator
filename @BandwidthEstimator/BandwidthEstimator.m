@@ -61,32 +61,32 @@ methods
 
   end % function
 
-  function self = set.parallel(self, value)
-
-    % if parallel is true, try to start a parallel pool
-    % if parallel is false, try to shut down parallel pool
-
-    p = gcp('nocreate');
-
-    if value == true & isempty(p)
-      try
-        parpool
-        self.parallel = true;
-      catch
-        disp('[ERROR] could not start parallel pool')
-      end
-    elseif value == false
-      try
-        % delete(gcp('nocreate'))
-        self.parallel = false;
-      catch
-        % disp('[ERROR] could not terminate parallel pool')
-      end
-    else
-      % disp('[ERROR] parallel should be true or false')
-    end
-
-  end % function
+  % function self = set.parallel(self, value)
+  %
+  %   % if parallel is true, try to start a parallel pool
+  %   % if parallel is false, try to shut down parallel pool
+  %
+  %   p = gcp('nocreate');
+  %
+  %   if value == true & isempty(p)
+  %     try
+  %       parpool
+  %       self.parallel = true;
+  %     catch
+  %       disp('[ERROR] could not start parallel pool')
+  %     end
+  %   elseif value == false
+  %     try
+  %       % delete(gcp('nocreate'))
+  %       self.parallel = false;
+  %     catch
+  %       % disp('[ERROR] could not terminate parallel pool')
+  %     end
+  %   else
+  %     % disp('[ERROR] parallel should be true or false')
+  %   end
+  %
+  % end % function
 
 
 end % methods
