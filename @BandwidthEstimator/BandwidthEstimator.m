@@ -95,6 +95,7 @@ methods (Static)
 
   spikeTrain   = getSpikeTrain(spikeTimes, timestep)
                  batchFunction(index, location, batchname, outfile, test)
+                 batchFunction_parallel(binId, bin_total, location, batchname, outfile, test)
   result       = alpha(k, tau)
   w            = hanning(n)
   D            = taper(signal, ratio)
