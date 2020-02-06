@@ -41,7 +41,8 @@ function batchFunction_parallel(binId, bin_total, location, batchname, outfile, 
         [filename, cellnum] = RatCatcher.read(index, location, batchname);
 
         % load the root object from the specified raw data file
-        load(filename);
+        this = load(filename);
+        root = this.root;
         root.cel    = cellnum;
         root        = root.AppendKalmanVel;
         speed       = root.svel;
