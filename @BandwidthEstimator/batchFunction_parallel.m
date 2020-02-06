@@ -1,4 +1,4 @@
-function batchFunction_parallel(binId, bin_total, location, batchname, outfile, test)
+function batchFunction_parallel(bin_id, bin_total, location, batchname, outfile, test)
 
     if ~test
         % add the propery directories to the MATLAB path
