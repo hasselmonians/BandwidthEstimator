@@ -59,7 +59,7 @@ function batchFunction_parallel(bin_id, bin_total, location, batchname, outfile,
 
         %% Save the data
 
-        writematrix([kmax, CI, kcorr], outfile);
+        writematrix([kmax, CI, kcorr], [outfile '-' num2str(ii) '.csv']);
 
     end % parfor
 
