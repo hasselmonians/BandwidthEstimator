@@ -17,7 +17,7 @@ function batchFunction_parallel(bin_id, bin_total, location, batchname, outfile,
     pc = parcluster('local');
 
     % discover the number of available cores assigned by SGE
-    nCores = strnum(getenv('NSLOTS'));
+    nCores = str2num(getenv('NSLOTS'));
 
     % set up directory for temporary parallel pool files
     parpool_tmpdir = ['~/.matlab/local_cluster_jobs/ratcatcher/ratcatcher_' num2str(bin_id)];
