@@ -38,7 +38,7 @@ function batchFunction_parallel(bin_id, bin_total, location, batchname, outfile,
 
         % the 'filename' is the path to your data file on the cluster
         % the 'filecode' is the associated numeric code (if any)
-        [filename, cellnum] = RatCatcher.read(index, location, batchname);
+        [filename, cellnum] = RatCatcher.read(ii, location, batchname);
 
         % load the root object from the specified raw data file
         this = load(filename);
